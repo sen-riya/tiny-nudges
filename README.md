@@ -16,6 +16,25 @@ The two reminders never show back-to-back (at least a 10-minute gap), and the ap
 
 Pressing **Esc** while the character is on screen dismisses it. It's registered as a system hot key, so no Accessibility permission is needed.
 
+## Download and install
+
+Tiny Nudges is built from source; there is no pre-built download. You need a Mac running macOS 13 or later.
+
+1. Install the Swift toolchain if you don't have it: `xcode-select --install` (or install Xcode).
+2. Download the code:
+   ```sh
+   git clone https://github.com/sen-riya/tiny-nudges.git
+   cd tiny-nudges
+   ```
+   Or use **Code > Download ZIP** on GitHub, unzip it, and open a Terminal in that folder.
+3. Install and start it:
+   ```sh
+   ./package.sh
+   ```
+4. Look for the water-drop icon in the menu bar. Use **Water reminder now** in its menu to see the character straight away.
+
+It now starts automatically every time you log in. To just try it without installing, run `swift run TinyNudges` instead of step 3.
+
 ## Requirements
 
 - macOS 13 or later
@@ -28,7 +47,7 @@ swift build -c release
 swift run TinyNudges
 ```
 
-## Install (start at login)
+## What the installer does
 
 ```sh
 ./package.sh
