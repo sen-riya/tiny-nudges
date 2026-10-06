@@ -1,4 +1,4 @@
-# Reminder
+# Tiny Nudges
 
 A tiny macOS menu-bar app that nags you, cheerfully, to look after yourself. A little animated character walks onto your screen to remind you to:
 
@@ -25,7 +25,7 @@ Pressing **Esc** while the character is on screen dismisses it. It's registered 
 
 ```sh
 swift build -c release
-swift run Reminder
+swift run TinyNudges
 ```
 
 ## Install (start at login)
@@ -34,13 +34,13 @@ swift run Reminder
 ./package.sh
 ```
 
-This builds a release binary, creates `~/Applications/Reminder.app`, ad-hoc signs it, and registers a LaunchAgent so it starts at login. Edit `LABEL` at the top of `package.sh` to use your own bundle identifier.
+This builds a release binary, creates `~/Applications/Tiny Nudges.app`, ad-hoc signs it, and registers a LaunchAgent so it starts at login. Edit `LABEL` at the top of `package.sh` to use your own bundle identifier.
 
 To uninstall:
 
 ```sh
-launchctl bootout "gui/$(id -u)/com.riya.reminder"
-rm -rf ~/Applications/Reminder.app ~/Library/LaunchAgents/com.riya.reminder.plist
+launchctl bootout "gui/$(id -u)/com.tinynudges.app"
+rm -rf "$HOME/Applications/Tiny Nudges.app" "$HOME/Library/LaunchAgents/com.tinynudges.app.plist"
 ```
 
 ## Testing with short timings
@@ -48,25 +48,29 @@ rm -rf ~/Applications/Reminder.app ~/Library/LaunchAgents/com.riya.reminder.plis
 Override any interval (in seconds) with environment variables:
 
 ```sh
-REMINDER_INTERVAL_SECONDS=20 REMINDER_EYE_INTERVAL_SECONDS=45 swift run Reminder
+TINY_NUDGES_INTERVAL_SECONDS=20 TINY_NUDGES_EYE_INTERVAL_SECONDS=45 swift run TinyNudges
 ```
 
 | Variable | Meaning |
 |----------|---------|
-| `REMINDER_INTERVAL_SECONDS` | water interval |
-| `REMINDER_SNOOZE_SECONDS` | water "Maybe later" delay |
-| `REMINDER_EYE_INTERVAL_SECONDS` | eye-break interval |
-| `REMINDER_EYE_SNOOZE_SECONDS` | eye-break "Not yet" delay |
-| `REMINDER_EYE_DURATION_SECONDS` | eye-break length |
-| `REMINDER_DISMISS_SECONDS` | delay after pressing Esc |
-| `REMINDER_GAP_SECONDS` | minimum gap between the two reminders |
+| `TINY_NUDGES_INTERVAL_SECONDS` | water interval |
+| `TINY_NUDGES_SNOOZE_SECONDS` | water "Maybe later" delay |
+| `TINY_NUDGES_EYE_INTERVAL_SECONDS` | eye-break interval |
+| `TINY_NUDGES_EYE_SNOOZE_SECONDS` | eye-break "Not yet" delay |
+| `TINY_NUDGES_EYE_DURATION_SECONDS` | eye-break length |
+| `TINY_NUDGES_DISMISS_SECONDS` | delay after pressing Esc |
+| `TINY_NUDGES_GAP_SECONDS` | minimum gap between the two reminders |
 
 ## Project layout
 
-- `Sources/Reminder/`: app code (SwiftUI + AppKit)
-  - `ReminderScheduler.swift`: decides when each reminder shows
+- `Sources/TinyNudges/`: app code (SwiftUI + AppKit)
+  - `NudgeScheduler.swift`: decides when each reminder shows
   - `OverlayController.swift` / `OverlayView.swift` / `CharacterView.swift`: the on-screen character and its animations
   - `EscapeHotKey.swift`: global Esc shortcut
   - `Resources/`: sprite frames
 - `Frames/`: source sprite sheets
 - `package.sh`: build, install and enable start-at-login
+
+## License
+
+[MIT](LICENSE). The character artwork is AI-generated and free to reuse.

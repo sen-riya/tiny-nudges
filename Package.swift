@@ -2,10 +2,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "Reminder",
+    name: "TinyNudges",
     platforms: [.macOS(.v13)],
     targets: [
-        .executableTarget(name: "Reminder", path: "Sources/Reminder",
+        .executableTarget(name: "TinyNudges", path: "Sources/TinyNudges",
                           resources: [.process("Resources")])
     ]
 )

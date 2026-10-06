@@ -1,8 +1,8 @@
 import SwiftUI
 
 @main
-struct ReminderApp: App {
-    @StateObject private var scheduler = ReminderScheduler()
+struct TinyNudgesApp: App {
+    @StateObject private var scheduler = NudgeScheduler()
 
     init() {
         // Menu-bar only: no Dock icon.
@@ -10,7 +10,7 @@ struct ReminderApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("Reminder", systemImage: "drop.fill") {
+        MenuBarExtra("Tiny Nudges", systemImage: "drop.fill") {
             Text("Next water: \(scheduler.nextWater.formatted(date: .omitted, time: .shortened))")
             Text("Next eye break: \(scheduler.nextEye.formatted(date: .omitted, time: .shortened))")
             Divider()

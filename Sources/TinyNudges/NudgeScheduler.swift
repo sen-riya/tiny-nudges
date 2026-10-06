@@ -2,18 +2,18 @@ import Foundation
 
 /// Decides *when* each reminder shows.
 /// Water: every hour, or 15 minutes after "Maybe later". Esc dismisses either one for 15 minutes. The two never run back-to-back (10-minute gap). Eye break: every 3 hours (10 minutes after "Ten more mins"), lasting 1 minute.
-/// Set REMINDER_INTERVAL_SECONDS / REMINDER_SNOOZE_SECONDS / REMINDER_EYE_INTERVAL_SECONDS /
-/// REMINDER_EYE_DURATION_SECONDS / REMINDER_EYE_SNOOZE_SECONDS / REMINDER_DISMISS_SECONDS / REMINDER_GAP_SECONDS to test with short timings.
+/// Set TINY_NUDGES_INTERVAL_SECONDS / TINY_NUDGES_SNOOZE_SECONDS / TINY_NUDGES_EYE_INTERVAL_SECONDS /
+/// TINY_NUDGES_EYE_DURATION_SECONDS / TINY_NUDGES_EYE_SNOOZE_SECONDS / TINY_NUDGES_DISMISS_SECONDS / TINY_NUDGES_GAP_SECONDS to test with short timings.
 @MainActor
-final class ReminderScheduler: ObservableObject {
-    private let waterInterval = ReminderScheduler.seconds("REMINDER_INTERVAL_SECONDS", default: 60 * 60)
-    private let snooze = ReminderScheduler.seconds("REMINDER_SNOOZE_SECONDS", default: 15 * 60)
-    private let eyeInterval = ReminderScheduler.seconds("REMINDER_EYE_INTERVAL_SECONDS", default: 3 * 60 * 60)
-    private let eyeSnooze = ReminderScheduler.seconds("REMINDER_EYE_SNOOZE_SECONDS", default: 10 * 60)
+final class NudgeScheduler: ObservableObject {
+    private let waterInterval = NudgeScheduler.seconds("TINY_NUDGES_INTERVAL_SECONDS", default: 60 * 60)
+    private let snooze = NudgeScheduler.seconds("TINY_NUDGES_SNOOZE_SECONDS", default: 15 * 60)
+    private let eyeInterval = NudgeScheduler.seconds("TINY_NUDGES_EYE_INTERVAL_SECONDS", default: 3 * 60 * 60)
+    private let eyeSnooze = NudgeScheduler.seconds("TINY_NUDGES_EYE_SNOOZE_SECONDS", default: 10 * 60)
     /// After one reminder finishes, the other waits at least this long (no back-to-back visits).
-    private let minGap = ReminderScheduler.seconds("REMINDER_GAP_SECONDS", default: 10 * 60)
-    private let dismissSnooze = ReminderScheduler.seconds("REMINDER_DISMISS_SECONDS", default: 15 * 60)
-    private let eyeDuration = Int(ReminderScheduler.seconds("REMINDER_EYE_DURATION_SECONDS", default: 60))
+    private let minGap = NudgeScheduler.seconds("TINY_NUDGES_GAP_SECONDS", default: 10 * 60)
+    private let dismissSnooze = NudgeScheduler.seconds("TINY_NUDGES_DISMISS_SECONDS", default: 15 * 60)
+    private let eyeDuration = Int(NudgeScheduler.seconds("TINY_NUDGES_EYE_DURATION_SECONDS", default: 60))
 
     @Published private(set) var nextWater: Date
     @Published private(set) var nextEye: Date
