@@ -6,6 +6,6 @@ let package = Package(
     platforms: [.macOS(.v13)],
     targets: [
         .executableTarget(name: "TinyNudges", path: "Sources/TinyNudges",
-                          resources: [.process("Resources")])
+                          resources: [.copy("Resources")])
     ]
 )

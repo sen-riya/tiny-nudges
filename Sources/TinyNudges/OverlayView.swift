@@ -11,7 +11,7 @@ struct OverlayView: View {
                     .id(controller.eyeIndex)   // each break step pops in as a fresh bubble
                     .transition(.scale(scale: 0.85, anchor: .bottomTrailing).combined(with: .opacity))
             }
-            CharacterView(pose: controller.pose, start: controller.poseStart, eyeFrame: controller.eyeFrame)
+            CharacterView(persona: controller.persona, pose: controller.pose, start: controller.poseStart, eyeFrame: controller.eyeFrame)
                 .padding(.trailing, 28)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
@@ -20,17 +20,18 @@ struct OverlayView: View {
     }
 }
 
-// Warm palette pulled from the character: chocolate hair, cream suit, gold earrings.
-private let ink = Color(red: 0.25, green: 0.15, blue: 0.12)
-private let cream = Color(red: 1.0, green: 0.965, blue: 0.92)
-private let aqua = Color(red: 0.60, green: 0.86, blue: 0.84)
-private let blush = Color(red: 1.0, green: 0.78, blue: 0.78)
-private let gold = Color(red: 1.0, green: 0.84, blue: 0.45)
-private let apricot = Color(red: 1.0, green: 0.84, blue: 0.68)
-
 struct SpeechBubble: View {
     let kind: Bubble
     let controller: OverlayController
+
+    private var palette: Persona.Palette { controller.persona.palette }
+    private var script: Persona.Script { controller.persona.script }
+    private var ink: Color { Color(palette.ink) }
+    private var cream: Color { Color(palette.cream) }
+    private var aqua: Color { Color(palette.aqua) }
+    private var blush: Color { Color(palette.blush) }
+    private var gold: Color { Color(palette.gold) }
+    private var apricot: Color { Color(palette.apricot) }
 
     var body: some View {
         VStack(alignment: .trailing, spacing: -2) {
@@ -98,8 +99,8 @@ struct SpeechBubble: View {
                 }
                 .foregroundColor(ink)
                 HStack(spacing: 10) {
-                    BubbleButton(title: "I'll drink", fill: aqua) { controller.choose(drank: true) }
-                    BubbleButton(title: "Maybe later", fill: blush) { controller.choose(drank: false) }
+                    BubbleButton(palette: palette, title: script.waterYes, fill: aqua) { controller.choose(drank: true) }
+                    BubbleButton(palette: palette, title: script.waterNo, fill: blush) { controller.choose(drank: false) }
                 }
             }
         case .eyeAsk:
@@ -117,12 +118,12 @@ struct SpeechBubble: View {
                 }
                 .foregroundColor(ink)
                 HStack(spacing: 10) {
-                    BubbleButton(title: "Break time!", fill: aqua) { controller.choose(drank: true) }
-                    BubbleButton(title: "Not yet", fill: blush) { controller.choose(drank: false) }
+                    BubbleButton(palette: palette, title: script.eyeYes, fill: aqua) { controller.choose(drank: true) }
+                    BubbleButton(palette: palette, title: script.eyeNo, fill: blush) { controller.choose(drank: false) }
                 }
             }
         case .eyeLater:
-            message(title: "Hmph. Fine.", subtitle: "I'll nag you again in 10 minutes. With love.")
+            message(title: script.eyeLater.title, subtitle: script.eyeLater.subtitle)
         case .eyeStep:
             VStack(spacing: 12) {
                 VStack(spacing: 3) {
@@ -138,19 +139,19 @@ struct SpeechBubble: View {
                 }
                 .foregroundColor(ink)
                 if let orb = controller.eyeStep.orb {
-                    BreathOrb(inhale: orb == .inhale, progress: controller.segProgress)
+                    BreathOrb(palette: palette, inhale: orb == .inhale, progress: controller.segProgress)
                 }
-                StepBar(done: controller.eyeIndex + 1, of: EyeSegment.all.count)
+                StepBar(palette: palette, done: controller.eyeIndex + 1, of: script.eyeSegments.count)
             }
         case .eyeDone:
             VStack(spacing: 12) {
                 message(title: controller.eyeStep.title, subtitle: controller.eyeStep.subtitle)
-                StepBar(done: EyeSegment.all.count, of: EyeSegment.all.count)
+                StepBar(palette: palette, done: script.eyeSegments.count, of: script.eyeSegments.count)
             }
         case .happy:
-            message(title: "Sip sip hooray!", subtitle: "Gold star for you. See you in an hour.")
+            message(title: script.waterHappy.title, subtitle: script.waterHappy.subtitle)
         case .sad:
-            message(title: "Boo… fine.", subtitle: "I'll go sulk for 15 minutes, then I'm back.")
+            message(title: script.waterSad.title, subtitle: script.waterSad.subtitle)
         }
     }
 
@@ -166,17 +167,18 @@ struct SpeechBubble: View {
 
 /// A circle to breathe along with: it swells while you breathe in and shrinks as you breathe out.
 struct BreathOrb: View {
+    let palette: Persona.Palette
     let inhale: Bool
     let progress: Double
 
     var body: some View {
         let grow = inhale ? progress : 1 - progress
         ZStack {
-            Circle().fill(aqua).overlay(Circle().strokeBorder(ink, lineWidth: 2.5))
+            Circle().fill(Color(palette.aqua)).overlay(Circle().strokeBorder(Color(palette.ink), lineWidth: 2.5))
                 .frame(width: 24 + 36 * grow, height: 24 + 36 * grow)
             Text(inhale ? "in" : "out")
                 .font(.system(size: 12, weight: .heavy, design: .rounded))
-                .foregroundColor(ink)
+                .foregroundColor(Color(palette.ink))
         }
         .frame(height: 60)
         .animation(.linear(duration: 0.1), value: progress)
@@ -185,6 +187,7 @@ struct BreathOrb: View {
 
 /// Segmented progress bar: one more segment fills with every pop-up.
 struct StepBar: View {
+    let palette: Persona.Palette
     let done: Int
     let of: Int
 
@@ -192,8 +195,8 @@ struct StepBar: View {
         HStack(spacing: 3) {
             ForEach(0..<of, id: \.self) { i in
                 Capsule()
-                    .fill(i < done ? blush : cream)
-                    .overlay(Capsule().strokeBorder(ink, lineWidth: 2))
+                    .fill(Color(i < done ? palette.blush : palette.cream))
+                    .overlay(Capsule().strokeBorder(Color(palette.ink), lineWidth: 2))
                     .frame(height: 12)
                     .scaleEffect(i == done - 1 ? 1.12 : 1)
             }
@@ -213,6 +216,7 @@ struct Tail: Shape {
 }
 
 struct BubbleButton: View {
+    let palette: Persona.Palette
     let title: String
     let fill: Color
     let action: () -> Void
@@ -221,12 +225,12 @@ struct BubbleButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 14, weight: .heavy, design: .rounded))
-                .foregroundColor(ink)
+                .foregroundColor(Color(palette.ink))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 9)
                 .background(
                     Capsule().fill(fill)
-                        .overlay(Capsule().strokeBorder(ink, lineWidth: 2.5))
+                        .overlay(Capsule().strokeBorder(Color(palette.ink), lineWidth: 2.5))
                 )
         }
         .buttonStyle(PressStyle())

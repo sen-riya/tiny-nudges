@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Plays the sprite frames from Resources/ (sliced from the Frames/ sheets).
+/// Plays the persona's sprite frames from Resources/<id>/ (sliced from the Frames/ sheets).
 struct CharacterView: View {
+    let persona: Persona
     let pose: Pose
     let start: Date
     var eyeFrame = 0
@@ -12,26 +13,38 @@ struct CharacterView: View {
     var body: some View {
         TimelineView(.animation) { timeline in
             let dt = timeline.date.timeIntervalSince(start)
-            Image(nsImage: pose == .eyeBreak ? Sprites.eye[eyeFrame] : Sprites.image(for: pose, at: dt))
+            let sprites = Sprites.set(for: persona)
+            Image(nsImage: pose == .eyeBreak ? sprites.eye[eyeFrame] : sprites.image(for: pose, at: dt))
                 .resizable()
                 .interpolation(.high)
                 .aspectRatio(contentMode: .fit)
-                .frame(height: pose == .happy ? Self.height * 1.2 : pose == .eyeBreak ? Self.height * (eyeFrame == 8 ? 0.95 : 1.25) : Self.height)
+                .frame(height: pose == .happy ? Self.height * 1.2 : pose == .eyeBreak ? Self.height * (eyeFrame == persona.sprites.laptopFrame ? 0.95 : 1.25) : Self.height)
                 .scaleEffect(pose == .eyeBreak ? 1 + 0.035 * sin(dt * 2 * .pi / 5) : 1, anchor: .bottom)   // slow breathing
-                .offset(y: pose == .happy ? -abs(sin(dt * 7)) * 14 : (pose == .eyeBreak && eyeFrame == 9 ? -abs(sin(dt * 2)) * 4 : 0))
+                .offset(y: pose == .happy ? -abs(sin(dt * 7)) * 14 : (pose == .eyeBreak && eyeFrame == persona.sprites.stretchFrame ? -abs(sin(dt * 2)) * 4 : 0))
         }
     }
 }
 
-private enum Sprites {
-    static let walkIn = load("walkin", 4)
-    static let walkOut = load("walkout", 4)
-    static let give = load("give", 3)
-    static let happy = load("happy", 1)
-    static let sad = load("sad", 2)
-    static let eye = load("eye", 8) + load("relax", 2)   // 8 = laptop, 9 = stretch
+/// One persona's loaded frames, cached after the first use.
+private struct Sprites {
+    let walkIn, walkOut, give, happy, sad: [NSImage]
+    let eye: [NSImage]   // strain frames, then laptop, then stretch
 
-    static func image(for pose: Pose, at t: TimeInterval) -> NSImage {
+    private static var cache: [String: Sprites] = [:]
+
+    static func set(for persona: Persona) -> Sprites {
+        if let cached = cache[persona.id] { return cached }
+        let n = persona.sprites
+        let set = Sprites(
+            walkIn: load("walkin", n.walkIn, persona.id), walkOut: load("walkout", n.walkOut, persona.id),
+            give: load("give", n.give, persona.id), happy: load("happy", n.happy, persona.id),
+            sad: load("sad", n.sad, persona.id),
+            eye: load("eye", n.eye, persona.id) + load("relax", n.relax, persona.id))
+        cache[persona.id] = set
+        return set
+    }
+
+    func image(for pose: Pose, at t: TimeInterval) -> NSImage {
         switch pose {
         case .walkIn: return walkIn[Int(t * 8) % walkIn.count]
         case .walkOut: return walkOut[Int(t * 8) % walkOut.count]
@@ -42,9 +55,9 @@ private enum Sprites {
         }
     }
 
-    private static func load(_ name: String, _ count: Int) -> [NSImage] {
+    private static func load(_ name: String, _ count: Int, _ folder: String) -> [NSImage] {
         (0..<count).map { i in
-            Bundle.module.url(forResource: "\(name)_\(i)", withExtension: "png")
+            Bundle.module.url(forResource: "\(name)_\(i)", withExtension: "png", subdirectory: "Resources/\(folder)")
                 .flatMap(NSImage.init(contentsOf:)) ?? NSImage()
         }
     }

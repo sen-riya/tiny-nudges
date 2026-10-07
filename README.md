@@ -93,7 +93,9 @@ TINY_NUDGES_INTERVAL_SECONDS=20 TINY_NUDGES_EYE_INTERVAL_SECONDS=45 swift run Ti
   - `OverlayController.swift` / `OverlayView.swift` / `CharacterView.swift`: the on-screen character and its animations
   - `TimingSetting.swift` / `SettingsView.swift`: the adjustable timings and their Settings window
   - `EscapeHotKey.swift`: global Esc shortcut
-  - `Resources/`: sprite frames
+  - `Persona.swift`: what a character is: sprites, bubble colours and every message
+  - `Personas/Female.swift`: the female character's messages and pop-ups
+  - `Resources/female/`: her sprite frames (each character gets its own folder)
 - `Frames/`: source sprite sheets
 - `logo.png` / `Icon/AppIcon.icns`: the logo and the app icon made from it
 - `package.sh`: build, install and enable start-at-login

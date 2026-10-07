@@ -4,21 +4,6 @@ import SwiftUI
 enum Pose { case walkIn, giveWater, happy, sad, eyeBreak, walkOut }
 enum Bubble { case greeting, question, happy, sad, eyeAsk, eyeLater, eyeStep, eyeDone }
 
-/// One randomly picked set of lines per visit, so the reminder doesn't get stale.
-struct Lines {
-    let greeting: String
-    let title: String
-    let subtitle: String
-
-    static let all: [Lines] = [
-        Lines(greeting: "Knock knock! Guess who?", title: "Water break, superstar!", subtitle: "You're basically a houseplant. Time to water yourself."),
-        Lines(greeting: "Surprise! It's me again!", title: "Sip sip hooray?", subtitle: "One glass of water, coming right up. You've got this."),
-        Lines(greeting: "Pssst… hydration squad here!", title: "Your cup misses you", subtitle: "Go give it some love, then come back and tell me."),
-        Lines(greeting: "Ta-daaa! Right on time!", title: "Glass of water o'clock", subtitle: "Future you says thank you in advance."),
-        Lines(greeting: "Hellooo, hydration hero!", title: "Quick, before I dramatically sigh", subtitle: "Grab a glass of water. It only takes a minute."),
-    ]
-}
-
 /// How a reminder ended.
 enum Outcome { case done, later, dismissed }
 
@@ -29,13 +14,14 @@ final class OverlayController: ObservableObject {
     @Published var pose: Pose = .walkIn
     @Published var poseStart = Date()
     @Published var bubble: Bubble?
-    @Published var lines = Lines.all[0]
-    @Published var eyeFrame = 0            // index into Sprites.eye (0-7 strain sheet, 8 laptop, 9 stretch)
-    @Published var eyeStep = EyeSegment.all[0]
+    @Published var persona = Persona.selected
+    @Published var lines = Persona.selected.script.waterLines[0]
+    @Published var eyeFrame = 0            // index into Sprites.eye (strain frames, then laptop, then stretch)
+    @Published var eyeStep = Persona.selected.script.eyeSegments[0]
     @Published var eyeProgress = 0.0       // 0...1 through the break
     @Published var eyeIndex = 0            // which of the 12 pop-ups we're on (drives the progress bar)
     @Published var segProgress = 0.0       // 0...1 through the current segment (drives the breathing orb)
-    @Published var eyeAsk = EyeAsk.all[0]
+    @Published var eyeAsk = Persona.selected.script.eyeAsks[0]
 
     private(set) var isShowing = false
     private var panel: NSPanel?
@@ -69,15 +55,15 @@ final class OverlayController: ObservableObject {
         return dismissed ? .dismissed : (drank ? .done : .later)
     }
 
-    /// Eye-strain break: asks first, then a timed routine (see EyeSegment.all) of `duration` real seconds.
+    /// Eye-strain break: asks first, then a timed routine (see the persona's eyeSegments) of `duration` real seconds.
     /// `.done` = break taken, `.later` = "Not yet".
     func runEyeBreak(duration: Int) async -> Outcome {
         guard let session = await begin() else { return .later }
         if dismissed { return abort(session) }
         eyeIndex = 0
-        eyeStep = EyeSegment.all[0]   // otherwise the previous run's finale lingers in the first bubble
-        eyeAsk = EyeAsk.all.randomElement() ?? EyeAsk.all[0]
-        eyeFrame = 8
+        eyeStep = persona.script.eyeSegments[0]   // otherwise the previous run's finale lingers in the first bubble
+        eyeAsk = persona.script.eyeAsks.randomElement() ?? persona.script.eyeAsks[0]
+        eyeFrame = persona.sprites.laptopFrame
         eyeProgress = 0
         setPose(.eyeBreak)
         bubble = .eyeAsk
@@ -92,7 +78,7 @@ final class OverlayController: ObservableObject {
             return dismissed ? .dismissed : .later
         }
 
-        let scale = Double(duration) / EyeSegment.totalSeconds
+        let scale = Double(duration) / persona.script.eyeRoutineSeconds
         let total = Double(duration)
         setPose(.eyeBreak)
         apply(0)
@@ -105,7 +91,7 @@ final class OverlayController: ObservableObject {
             eyeProgress = elapsed / total
 
             var t = 0.0
-            for (i, seg) in EyeSegment.all.enumerated() where !seg.isFinale {
+            for (i, seg) in persona.script.eyeSegments.enumerated() where !seg.isFinale {
                 let len = seg.seconds * scale
                 if elapsed < t + len {
                     segProgress = (elapsed - t) / len
@@ -127,8 +113,8 @@ final class OverlayController: ObservableObject {
 
     /// The "Fresh eyes" message: shown only once the whole timed routine is done.
     private func playFinale() async {
-        guard let index = EyeSegment.all.firstIndex(where: \.isFinale) else { return }
-        let seg = EyeSegment.all[index]
+        guard let index = persona.script.eyeSegments.firstIndex(where: \.isFinale) else { return }
+        let seg = persona.script.eyeSegments[index]
         let start = Date()
         while !dismissed {
             let elapsed = Date().timeIntervalSince(start)
@@ -166,7 +152,7 @@ final class OverlayController: ObservableObject {
     }
 
     private func apply(_ index: Int, at t: Double = 0) {
-        let seg = EyeSegment.all[index]
+        let seg = persona.script.eyeSegments[index]
         if eyeIndex != index { eyeIndex = index }
         if eyeStep.title != seg.title { eyeStep = seg }   // not tied to eyeIndex: a new run restarts at index 0
         let frame = seg.frames[Int(t / seg.frameSeconds) % seg.frames.count]
@@ -182,9 +168,10 @@ final class OverlayController: ObservableObject {
         guard !isShowing, let screen = NSScreen.main else { return nil }
         isShowing = true
         dismissed = false
+        persona = Persona.selected   // picked up fresh each visit, so a change applies next time
         escapeKey.register { [weak self] in self?.dismiss() }
         bubble = nil
-        lines = Lines.all.randomElement() ?? Lines.all[0]
+        lines = persona.script.waterLines.randomElement() ?? persona.script.waterLines[0]
         setPose(.walkIn)
 
         let visible = screen.visibleFrame
@@ -253,47 +240,4 @@ final class OverlayController: ObservableObject {
             left -= 0.1
         }
     }
-}
-
-/// One moment of the 1-minute eye break. Segment lengths (excluding the finale) add up to 60 s.
-struct EyeSegment {
-    let title: String
-    let subtitle: String
-    let seconds: Double
-    let frames: [Int]          // indices into Sprites.eye
-    let frameSeconds: Double   // how long each frame is shown
-    var orb: Orb? = nil
-    var isFinale = false
-
-    enum Orb { case inhale, exhale }
-
-    /// Length of the timed routine; the finale is shown afterwards and isn't counted.
-    static let totalSeconds = all.filter { !$0.isFinale }.reduce(0) { $0 + $1.seconds }
-
-    static let all: [EyeSegment] = [
-        EyeSegment(title: "Screens off, eyes up!", subtitle: "You've worked so hard today. This minute is all yours.", seconds: 5, frames: [8], frameSeconds: 5),
-        EyeSegment(title: "Glasses off!", subtitle: "Those eyes have earned a proper rest.", seconds: 5, frames: [0, 1, 2, 3], frameSeconds: 1.25),
-        EyeSegment(title: "Breathe in…", subtitle: "Nice and slow. Follow the bubble.", seconds: 5, frames: [3], frameSeconds: 5, orb: .inhale),
-        EyeSegment(title: "…and breathe out", subtitle: "Let it all go, even that tab you're stressing about.", seconds: 5, frames: [3], frameSeconds: 5, orb: .exhale),
-        EyeSegment(title: "Stretch it out!", subtitle: "Arms up high. Reach for the ceiling!", seconds: 5, frames: [9], frameSeconds: 5),
-        EyeSegment(title: "Look over there!", subtitle: "Follow my eyes. Ooh, what's that?", seconds: 5, frames: [4], frameSeconds: 5),
-        EyeSegment(title: "Now the other way!", subtitle: "Slow eye rolls. Nobody's watching. (I am.)", seconds: 5, frames: [5], frameSeconds: 5),
-        EyeSegment(title: "Breathe in again…", subtitle: "Shoulders down. Jaw unclenched. Yes, that one.", seconds: 5, frames: [3], frameSeconds: 5, orb: .inhale),
-        EyeSegment(title: "…and all the way out", subtitle: "Aaaand relax. You're doing amazing.", seconds: 5, frames: [3], frameSeconds: 5, orb: .exhale),
-        EyeSegment(title: "Big yawn time!", subtitle: "Stretch those arms and yawn like nobody's watching.", seconds: 5, frames: [9], frameSeconds: 5),
-        EyeSegment(title: "Look far, far away", subtitle: "Pick something across the room and stare like you mean it.", seconds: 5, frames: [3, 4], frameSeconds: 2.5),
-        EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. You deserved that. Go be brilliant!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
-    ]
-}
-
-/// The opening "you deserve a break" pitch; one is picked at random per visit.
-struct EyeAsk {
-    let title: String
-    let subtitle: String
-
-    static let all: [EyeAsk] = [
-        EyeAsk(title: "You've worked so hard!", subtitle: "Seriously, you deserve a break. One minute, eyes off the screen?"),
-        EyeAsk(title: "Look at you, being productive!", subtitle: "Your eyes are begging for a breather. Give them 60 seconds?"),
-        EyeAsk(title: "Okay hotshot, pause!", subtitle: "The screen will survive without you for a minute. Promise."),
-    ]
 }
