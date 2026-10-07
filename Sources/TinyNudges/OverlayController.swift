@@ -75,6 +75,7 @@ final class OverlayController: ObservableObject {
         guard let session = await begin() else { return .later }
         if dismissed { return abort(session) }
         eyeIndex = 0
+        eyeStep = EyeSegment.all[0]   // otherwise the previous run's finale lingers in the first bubble
         eyeAsk = EyeAsk.all.randomElement() ?? EyeAsk.all[0]
         eyeFrame = 8
         eyeProgress = 0
@@ -104,7 +105,7 @@ final class OverlayController: ObservableObject {
             eyeProgress = elapsed / total
 
             var t = 0.0
-            for (i, seg) in EyeSegment.all.enumerated() {
+            for (i, seg) in EyeSegment.all.enumerated() where !seg.isFinale {
                 let len = seg.seconds * scale
                 if elapsed < t + len {
                     segProgress = (elapsed - t) / len
@@ -117,8 +118,24 @@ final class OverlayController: ObservableObject {
         }
         if dismissed { return abort(session) }
         eyeProgress = 1
+
+        await playFinale()
+        if dismissed { return abort(session) }
         await finish(session)
         return dismissed ? .dismissed : .done
+    }
+
+    /// The "Fresh eyes" message: shown only once the whole timed routine is done.
+    private func playFinale() async {
+        guard let index = EyeSegment.all.firstIndex(where: \.isFinale) else { return }
+        let seg = EyeSegment.all[index]
+        let start = Date()
+        while !dismissed {
+            let elapsed = Date().timeIntervalSince(start)
+            if elapsed >= seg.seconds { break }
+            apply(index, at: elapsed)
+            await pause(0.1)
+        }
     }
 
     /// Esc: the character vanishes right away, wherever she is in the routine.
@@ -150,7 +167,8 @@ final class OverlayController: ObservableObject {
 
     private func apply(_ index: Int, at t: Double = 0) {
         let seg = EyeSegment.all[index]
-        if eyeIndex != index { eyeIndex = index; eyeStep = seg }
+        if eyeIndex != index { eyeIndex = index }
+        if eyeStep.title != seg.title { eyeStep = seg }   // not tied to eyeIndex: a new run restarts at index 0
         let frame = seg.frames[Int(t / seg.frameSeconds) % seg.frames.count]
         if eyeFrame != frame { eyeFrame = frame }
         let bubble: Bubble = seg.isFinale ? .eyeDone : .eyeStep
@@ -237,7 +255,7 @@ final class OverlayController: ObservableObject {
     }
 }
 
-/// One moment of the 1-minute eye break. Segment lengths add up to 60 s.
+/// One moment of the 1-minute eye break. Segment lengths (excluding the finale) add up to 60 s.
 struct EyeSegment {
     let title: String
     let subtitle: String
@@ -249,7 +267,8 @@ struct EyeSegment {
 
     enum Orb { case inhale, exhale }
 
-    static let totalSeconds = all.reduce(0) { $0 + $1.seconds }
+    /// Length of the timed routine; the finale is shown afterwards and isn't counted.
+    static let totalSeconds = all.filter { !$0.isFinale }.reduce(0) { $0 + $1.seconds }
 
     static let all: [EyeSegment] = [
         EyeSegment(title: "Screens off, eyes up!", subtitle: "You've worked so hard today. This minute is all yours.", seconds: 5, frames: [8], frameSeconds: 5),
