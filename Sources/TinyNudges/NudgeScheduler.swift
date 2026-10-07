@@ -1,32 +1,43 @@
 import Foundation
 
 /// Decides *when* each reminder shows.
-/// Water: every hour, or 15 minutes after "Maybe later". Esc dismisses either one for 15 minutes. The two never run back-to-back (10-minute gap). Eye break: every 3 hours (10 minutes after "Ten more mins"), lasting 1 minute.
-/// Set TINY_NUDGES_INTERVAL_SECONDS / TINY_NUDGES_SNOOZE_SECONDS / TINY_NUDGES_EYE_INTERVAL_SECONDS /
-/// TINY_NUDGES_EYE_DURATION_SECONDS / TINY_NUDGES_EYE_SNOOZE_SECONDS / TINY_NUDGES_DISMISS_SECONDS / TINY_NUDGES_GAP_SECONDS to test with short timings.
+/// Defaults: water every hour, or 15 minutes after "Maybe later". Esc dismisses either one for 15 minutes. The two never run back-to-back (10-minute gap). Eye break every 3 hours (10 minutes after "Not yet"), lasting 1 minute.
+/// All timings are adjustable in Settings (see `TimingSetting`); TINY_NUDGES_*_SECONDS environment variables override them for testing.
 @MainActor
 final class NudgeScheduler: ObservableObject {
-    private let waterInterval = NudgeScheduler.seconds("TINY_NUDGES_INTERVAL_SECONDS", default: 60 * 60)
-    private let snooze = NudgeScheduler.seconds("TINY_NUDGES_SNOOZE_SECONDS", default: 15 * 60)
-    private let eyeInterval = NudgeScheduler.seconds("TINY_NUDGES_EYE_INTERVAL_SECONDS", default: 3 * 60 * 60)
-    private let eyeSnooze = NudgeScheduler.seconds("TINY_NUDGES_EYE_SNOOZE_SECONDS", default: 10 * 60)
+    private var waterInterval: TimeInterval { TimingSetting.waterInterval.seconds }
+    private var snooze: TimeInterval { TimingSetting.waterSnooze.seconds }
+    private var eyeInterval: TimeInterval { TimingSetting.eyeInterval.seconds }
+    private var eyeSnooze: TimeInterval { TimingSetting.eyeSnooze.seconds }
     /// After one reminder finishes, the other waits at least this long (no back-to-back visits).
-    private let minGap = NudgeScheduler.seconds("TINY_NUDGES_GAP_SECONDS", default: 10 * 60)
-    private let dismissSnooze = NudgeScheduler.seconds("TINY_NUDGES_DISMISS_SECONDS", default: 15 * 60)
-    private let eyeDuration = Int(NudgeScheduler.seconds("TINY_NUDGES_EYE_DURATION_SECONDS", default: 60))
+    private var minGap: TimeInterval { TimingSetting.gap.seconds }
+    private var dismissSnooze: TimeInterval { TimingSetting.dismissSnooze.seconds }
+    private var eyeDuration: Int { Int(TimingSetting.eyeDuration.seconds) }
 
     @Published private(set) var nextWater: Date
     @Published private(set) var nextEye: Date
+    /// Bumped on "Reset to defaults" so the settings rows reload their values.
+    @Published private(set) var resetCount = 0
     private let overlay = OverlayController()
     private var timer: Timer?
 
     init() {
-        nextWater = Date().addingTimeInterval(waterInterval)
-        nextEye = Date().addingTimeInterval(eyeInterval)
+        nextWater = Date().addingTimeInterval(TimingSetting.waterInterval.seconds)
+        nextEye = Date().addingTimeInterval(TimingSetting.eyeInterval.seconds)
         // Poll instead of one long timer so sleep/wake can't make us miss the time.
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.tick() }
         }
+    }
+
+    /// Restart the countdowns from now, e.g. after the interval is changed in Settings.
+    func rescheduleWater() { nextWater = Date().addingTimeInterval(waterInterval) }
+    func rescheduleEye() { nextEye = Date().addingTimeInterval(eyeInterval) }
+
+    func settingsReset() {
+        resetCount += 1
+        rescheduleWater()
+        rescheduleEye()
     }
 
     func waterNow() {
@@ -74,9 +85,5 @@ final class NudgeScheduler: ObservableObject {
         let end = Date()
         nextEye = end.addingTimeInterval(wait)
         nextWater = max(nextWater, end.addingTimeInterval(minGap))
-    }
-
-    private static func seconds(_ key: String, default value: TimeInterval) -> TimeInterval {
-        ProcessInfo.processInfo.environment[key].flatMap(TimeInterval.init) ?? value
     }
 }

@@ -1,3 +1,5 @@
+<p align="center"><img src="logo.png" alt="Tiny Nudges logo" width="160"></p>
+
 # Tiny Nudges
 
 A tiny macOS menu-bar app that nags you, cheerfully, to look after yourself. A little animated character walks onto your screen to remind you to:
@@ -35,6 +37,10 @@ Tiny Nudges is built from source; there is no pre-built download. You need a Mac
 
 It now starts automatically every time you log in. To just try it without installing, run `swift run TinyNudges` instead of step 3.
 
+## Settings
+
+Choose **Settings…** (⌘,) in the menu-bar menu to change any timing: how often each reminder appears, how long "Maybe later" / "Not yet" / Esc wait before coming back, the eye-break length, and the minimum gap between reminders. Changes are saved and apply straight away; changing an interval restarts that countdown. **Reset to defaults** puts everything back.
+
 ## Requirements
 
 - macOS 13 or later
@@ -64,7 +70,7 @@ rm -rf "$HOME/Applications/Tiny Nudges.app" "$HOME/Library/LaunchAgents/com.tiny
 
 ## Testing with short timings
 
-Override any interval (in seconds) with environment variables:
+Environment variables override the saved Settings values. Set any interval (in seconds) like this:
 
 ```sh
 TINY_NUDGES_INTERVAL_SECONDS=20 TINY_NUDGES_EYE_INTERVAL_SECONDS=45 swift run TinyNudges
@@ -85,9 +91,11 @@ TINY_NUDGES_INTERVAL_SECONDS=20 TINY_NUDGES_EYE_INTERVAL_SECONDS=45 swift run Ti
 - `Sources/TinyNudges/`: app code (SwiftUI + AppKit)
   - `NudgeScheduler.swift`: decides when each reminder shows
   - `OverlayController.swift` / `OverlayView.swift` / `CharacterView.swift`: the on-screen character and its animations
+  - `TimingSetting.swift` / `SettingsView.swift`: the adjustable timings and their Settings window
   - `EscapeHotKey.swift`: global Esc shortcut
   - `Resources/`: sprite frames
 - `Frames/`: source sprite sheets
+- `logo.png` / `Icon/AppIcon.icns`: the logo and the app icon made from it
 - `package.sh`: build, install and enable start-at-login
 
 ## License
