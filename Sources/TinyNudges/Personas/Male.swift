@@ -11,8 +11,8 @@ extension Persona {
         sprites: SpriteCounts(walkIn: 5, walkOut: 5, give: 3, happy: 1, sad: 1, eye: 8, relax: 2,
                               askFrame: 8, stretchFrame: 9, idle: 1),
         script: Script(
-            waterYes: "Yes, bhai!", waterNo: "Later, bro",
-            waterHappy: Message(title: "Dammmmnn, bhai!", subtitle: "Proud of you. See you in an hour."),
+            waterYes: "Ha Bhai Ok", waterNo: "Later, bro",
+            waterHappy: Message(title: "Dammmmnn, crazy bhai!", subtitle: "Proud of you. See you in an hour."),
             waterSad: Message(title: "Ah!", subtitle: "Cool, cool. I'll be back in 15 minutes. Same glass."),
             eyeYes: "Lessgo!", eyeNo: "Not now",
             eyeLater: Message(title: "Ah!", subtitle: "Cool, cool. Your eyes and I will be back in 10 minutes."),
@@ -42,7 +42,7 @@ extension Persona {
                 EyeSegment(title: "Look far, far away", subtitle: "Woah Crazyyy, you can see the whole room. Pick a spot and focus.", seconds: 5, frames: [3, 4], frameSeconds: 2.5),
                 EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. Dammmmnn, you look brand new. Go crush it!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ],
-            bye: Message(title: "Crazy, bhai!", subtitle: "Will see you soon.")
+            bye: Message(title: "Catch you later!", subtitle: "Cool, will see you soon.")
         )
     )
 }
