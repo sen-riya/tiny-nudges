@@ -57,10 +57,11 @@ private struct Sprites {
         }
     }
 
+    /// Frames that exist on disk; a count larger than the files provided is tolerated (extra frames are skipped).
     private static func load(_ name: String, _ count: Int, _ folder: String) -> [NSImage] {
-        (0..<count).map { i in
+        (0..<count).compactMap { i in
             Bundle.module.url(forResource: "\(name)_\(i)", withExtension: "png", subdirectory: "Resources/\(folder)")
-                .flatMap(NSImage.init(contentsOf:)) ?? NSImage()
+                .flatMap(NSImage.init(contentsOf:))
         }
     }
 }

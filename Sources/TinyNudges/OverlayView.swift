@@ -51,7 +51,8 @@ struct SpeechBubble: View {
         content
             .padding(.horizontal, 18)
             .padding(.vertical, 16)
-            .frame(width: 250)
+            .frame(minWidth: 210, maxWidth: 290)   // hugs short text, grows (and wraps) for long text
+            .fixedSize(horizontal: false, vertical: true)
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 24, style: .continuous).fill(ink).offset(x: 4, y: 5)
@@ -87,58 +88,19 @@ struct SpeechBubble: View {
                 .foregroundColor(ink)
         case .question:
             VStack(spacing: 14) {
-                VStack(spacing: 4) {
-                    Text(controller.lines.title)
-                        .font(.system(size: 18, weight: .heavy, design: .rounded))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(controller.lines.subtitle)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .opacity(0.75)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .foregroundColor(ink)
-                HStack(spacing: 10) {
-                    BubbleButton(palette: palette, title: script.waterYes, fill: aqua) { controller.choose(drank: true) }
-                    BubbleButton(palette: palette, title: script.waterNo, fill: blush) { controller.choose(drank: false) }
-                }
+                BubbleText(palette: palette, title: controller.lines.title, subtitle: controller.lines.subtitle)
+                ButtonRow(palette: palette, yes: script.waterYes, no: script.waterNo) { controller.choose(drank: $0) }
             }
         case .eyeAsk:
             VStack(spacing: 14) {
-                VStack(spacing: 4) {
-                    Text(controller.eyeAsk.title)
-                        .font(.system(size: 18, weight: .heavy, design: .rounded))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(controller.eyeAsk.subtitle)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .opacity(0.75)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .foregroundColor(ink)
-                HStack(spacing: 10) {
-                    BubbleButton(palette: palette, title: script.eyeYes, fill: aqua) { controller.choose(drank: true) }
-                    BubbleButton(palette: palette, title: script.eyeNo, fill: blush) { controller.choose(drank: false) }
-                }
+                BubbleText(palette: palette, title: controller.eyeAsk.title, subtitle: controller.eyeAsk.subtitle)
+                ButtonRow(palette: palette, yes: script.eyeYes, no: script.eyeNo) { controller.choose(drank: $0) }
             }
         case .eyeLater:
             message(title: script.eyeLater.title, subtitle: script.eyeLater.subtitle)
         case .eyeStep:
             VStack(spacing: 12) {
-                VStack(spacing: 3) {
-                    Text(controller.eyeStep.title)
-                        .font(.system(size: 18, weight: .heavy, design: .rounded))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(controller.eyeStep.subtitle)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .opacity(0.75)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .foregroundColor(ink)
+                BubbleText(palette: palette, title: controller.eyeStep.title, subtitle: controller.eyeStep.subtitle)
                 if let orb = controller.eyeStep.orb {
                     BreathOrb(palette: palette, inhale: orb == .inhale, progress: controller.segProgress)
                 }
@@ -165,6 +127,44 @@ struct SpeechBubble: View {
                 .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
         }
         .foregroundColor(ink)
+    }
+}
+
+/// Title plus smaller subtitle, centred; wraps to as many lines as the text needs.
+struct BubbleText: View {
+    let palette: Persona.Palette
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(title)
+                .font(.system(size: 18, weight: .heavy, design: .rounded))
+            Text(subtitle)
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .opacity(0.75)
+        }
+        .multilineTextAlignment(.center)
+        .fixedSize(horizontal: false, vertical: true)
+        .foregroundColor(Color(palette.ink))
+    }
+}
+
+/// The yes / no buttons: side by side when the labels are short, stacked when they're long.
+struct ButtonRow: View {
+    let palette: Persona.Palette
+    let yes: String
+    let no: String
+    let choose: (Bool) -> Void
+
+    private var stacked: Bool { max(yes.count, no.count) > 13 }
+
+    var body: some View {
+        let layout = stacked ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 10))
+        layout {
+            BubbleButton(palette: palette, title: yes, fill: Color(palette.aqua)) { choose(true) }
+            BubbleButton(palette: palette, title: no, fill: Color(palette.blush)) { choose(false) }
+        }
     }
 }
 
@@ -204,6 +204,7 @@ struct StepBar: View {
                     .scaleEffect(i == done - 1 ? 1.12 : 1)
             }
         }
+        .frame(maxWidth: 214)   // don't let the bar stretch the bubble
         .animation(.spring(response: 0.35, dampingFraction: 0.5), value: done)
     }
 }
@@ -229,8 +230,11 @@ struct BubbleButton: View {
             Text(title)
                 .font(.system(size: 14, weight: .heavy, design: .rounded))
                 .foregroundColor(Color(palette.ink))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)   // long labels wrap instead of clipping
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 9)
+                .padding(.horizontal, 10)
                 .background(
                     Capsule().fill(fill)
                         .overlay(Capsule().strokeBorder(Color(palette.ink), lineWidth: 2.5))
