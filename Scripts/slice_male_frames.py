@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Slice the male sprite sheets in Frames/ into Sources/TinyNudges/Resources/male/<name>_<n>.png.
 
-Each sheet is a row of transparent-background poses; Frames/Specific.png holds the eye-break poses and "Male Cool pose .png" the standing pose. Frames of one sequence share a canvas
+Each sheet is a row of transparent-background poses; Frames/Specific.png holds the eye-break poses and "Male Cool pose .png" the standing pose, "male side eye.png" the refusal. Frames of one sequence share a canvas
 (so the character doesn't jump around) scaled to a fixed height, like the female frames.
 Requires Pillow and numpy:  python3 Scripts/slice_male_frames.py
 """
@@ -112,7 +112,7 @@ def main():
     save(mirrored(canvas(split(load("Male Walk Out.png")), BODY_H)[0]), "walkout")
     save(canvas(split(load("Male Give Water.png")), BODY_H)[0], "give")
     save(canvas(split(load("Male Happy.png")), BODY_H)[0][:1], "happy")   # the jumping pose
-    save(canvas(split(load("Male Sad.png")), BODY_H)[0], "sad")
+    save(canvas([pose(cutout("male side eye.png"), (0, 1090, 0, 1443))], BODY_H)[0], "sad")   # side eye when you say no
 
     sheet = load("Specific.png")
     save(canvas([pose(cutout("Male Cool pose .png"), (0, 296, 0, 556))], BODY_H)[0], "idle")   # hands in pockets: the pose he strikes while talking
