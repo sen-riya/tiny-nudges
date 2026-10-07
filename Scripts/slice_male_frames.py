@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Slice the male sprite sheets in Frames/ into Sources/TinyNudges/Resources/male/<name>_<n>.png.
 
-Each sheet is a row of transparent-background poses. Frames of one sequence share a canvas
+Each sheet is a row of transparent-background poses; Frames/Specific.png holds the eye-break poses. Frames of one sequence share a canvas
 (so the character doesn't jump around) scaled to a fixed height, like the female frames.
 Requires Pillow and numpy:  python3 Scripts/slice_male_frames.py
 """
@@ -13,7 +13,13 @@ from scipy import ndimage
 ROOT = Path(__file__).resolve().parent.parent
 SRC, OUT = ROOT / "Frames", ROOT / "Sources/TinyNudges/Resources/male"
 BODY_H, EYE_H = 256, 300      # output heights, matching the female sprites
-BUST_SCALE = 1.65             # head-and-shoulders frames drawn this much larger than the full-body scale
+BUST_SCALE = 1.2              # head-and-shoulders frames drawn this much larger than the full-body scale
+
+# Where each eye-break pose sits on Frames/Specific.png: (x0, x1, y0, y1) in pixels.
+EYE_BOXES = [(0, 275, 388, 724), (190, 385, 388, 640), (380, 560, 388, 640), (556, 726, 388, 640),
+             (726, 906, 388, 640), (900, 1096, 388, 640), (1096, 1280, 388, 640), (1280, 1470, 405, 640)]
+LAPTOP_BOX = (1540, 1950, 100, 400)    # lying down with the laptop: the pose she holds while asking
+STRETCH_BOX = (1895, 2171, 0, 421)     # the big yawn
 
 
 def load(name):
@@ -36,6 +42,23 @@ def split(im):
         if not on and start is not None: runs.append((start, x)); start = None
     if start is not None: runs.append((start, len(cols)))
     return [im[:, a:b] for a, b in runs]
+
+
+def pose(im, box):
+    """The one pose inside `box`: its biggest blob, plus any small bits (sparkles, '?') right next to it."""
+    x0, x1, y0, y1 = box
+    crop = im[y0:y1, x0:x1].copy()
+    near = ndimage.binary_dilation(crop[..., 3] > 0, iterations=3)
+    labels, n = ndimage.label(near, structure=np.ones((3, 3)))
+    areas = ndimage.sum(crop[..., 3] > 0, labels, range(1, n + 1))
+    main = int(np.argmax(areas)) + 1
+    close = ndimage.binary_dilation(labels == main, iterations=40)
+    for i, area in enumerate(areas, start=1):
+        blob = labels == i
+        on_edge = blob[0].any() or blob[-1].any() or blob[:, 0].any() or blob[:, -1].any()   # a neighbour's edge
+        keep = i == main or (area < 2500 and not on_edge and (close & blob).any())
+        if not keep: crop[labels == i] = 0
+    return crop
 
 
 def bbox(im):
@@ -73,16 +96,19 @@ def main():
     save(canvas(split(load("Male Happy.png")), BODY_H)[0][:1], "happy")   # the jumping pose
     save(canvas(split(load("Male Sad.png")), BODY_H)[0], "sad")
 
-    # Eye break: 5 glasses poses (0-4), then 3 head-and-shoulders "look around" poses (5-7).
-    glasses, scale = canvas(split(load("Male glasses.png")), EYE_H)
-    looks, _ = canvas(split(load("Male Look around.png")), EYE_H, scale * BUST_SCALE)
-    w, h = glasses[0].size
+    # Eye break: 8 poses (0 = full body, 1-7 head-and-shoulders), then the laptop and yawn poses.
+    sheet = load("Specific.png")
+    eyes = [pose(sheet, b) for b in EYE_BOXES]
+    full, scale = canvas(eyes[:1], EYE_H)
+    busts, _ = canvas(eyes[1:], EYE_H, scale * BUST_SCALE)
+    w, h = max(f.width for f in full + busts), full[0].height
     placed = []
-    for f in looks:
+    for f in full + busts:   # one shared canvas so the character doesn't jump between poses
         c = Image.new("RGBA", (w, h))
         c.paste(f, ((w - f.width) // 2, h - f.height))
         placed.append(c)
-    save(glasses + placed, "eye")
+    save(placed, "eye")
+    save(canvas([pose(sheet, LAPTOP_BOX)], EYE_H)[0] + canvas([pose(sheet, STRETCH_BOX)], EYE_H)[0], "relax")
 
 
 if __name__ == "__main__":
