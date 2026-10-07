@@ -68,6 +68,7 @@ struct SpeechBubble: View {
         case .eyeLater: return aqua
         case .eyeStep: return aqua
         case .eyeDone: return gold
+        case .bye: return apricot
         case .greeting: return blush
         case .question: return apricot
         case .happy: return gold
@@ -148,6 +149,8 @@ struct SpeechBubble: View {
                 message(title: controller.eyeStep.title, subtitle: controller.eyeStep.subtitle)
                 StepBar(palette: palette, done: script.eyeSegments.count, of: script.eyeSegments.count)
             }
+        case .bye:
+            if let bye = script.bye { message(title: bye.title, subtitle: bye.subtitle) }
         case .happy:
             message(title: script.waterHappy.title, subtitle: script.waterHappy.subtitle)
         case .sad:

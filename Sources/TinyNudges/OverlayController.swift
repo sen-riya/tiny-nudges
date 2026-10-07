@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum Pose { case walkIn, giveWater, idle, happy, sad, eyeBreak, walkOut }
-enum Bubble { case greeting, question, happy, sad, eyeAsk, eyeLater, eyeStep, eyeDone }
+enum Bubble { case greeting, question, happy, sad, eyeAsk, eyeLater, eyeStep, eyeDone, bye }
 
 /// How a reminder ended.
 enum Outcome { case done, later, dismissed }
@@ -186,7 +186,7 @@ final class OverlayController: ObservableObject {
     }
 
     private func finish(_ s: Session) async {
-        bubble = nil
+        bubble = persona.script.bye == nil ? nil : .bye   // a goodbye rides along with the walk out
         setPose(.walkOut)
         await slide(s.panel, toX: s.offscreenX, y: s.y)
         s.panel.orderOut(nil)

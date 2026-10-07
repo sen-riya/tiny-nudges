@@ -44,6 +44,8 @@ struct Persona: Identifiable {
         let waterLines: [Lines]
         let eyeAsks: [EyeAsk]
         let eyeSegments: [EyeSegment]
+        /// Said while walking back out (nil = she leaves silently).
+        var bye: Message? = nil
 
         /// Length of the timed routine; the finale is shown afterwards and isn't counted.
         var eyeRoutineSeconds: Double { eyeSegments.filter { !$0.isFinale }.reduce(0) { $0 + $1.seconds } }
