@@ -63,7 +63,7 @@ final class OverlayController: ObservableObject {
         eyeIndex = 0
         eyeStep = persona.script.eyeSegments[0]   // otherwise the previous run's finale lingers in the first bubble
         eyeAsk = persona.script.eyeAsks.randomElement() ?? persona.script.eyeAsks[0]
-        eyeFrame = persona.sprites.laptopFrame
+        eyeFrame = persona.sprites.askFrame
         eyeProgress = 0
         setPose(.eyeBreak)
         bubble = .eyeAsk

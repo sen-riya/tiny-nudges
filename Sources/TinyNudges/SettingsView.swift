@@ -2,9 +2,17 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var scheduler: NudgeScheduler
+    @AppStorage(Persona.storageKey) private var personaID = Persona.all[0].id
 
     var body: some View {
         Form {
+            Section("Character") {
+                Picker("Who nags you", selection: $personaID) {
+                    ForEach(Persona.all) { Text($0.name).tag($0.id) }
+                }
+                Text("The change shows up the next time a reminder appears.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
             Section("Water") {
                 TimingRow(.waterInterval, "Remind me every", range: 5...480, step: 5, unit: "min") {
                     scheduler.rescheduleWater()
@@ -29,7 +37,7 @@ struct SettingsView: View {
         }
         .id(scheduler.resetCount)
         .formStyle(.grouped)
-        .frame(width: 440, height: 480)
+        .frame(width: 440, height: 560)
     }
 }
 

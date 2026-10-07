@@ -18,7 +18,7 @@ struct CharacterView: View {
                 .resizable()
                 .interpolation(.high)
                 .aspectRatio(contentMode: .fit)
-                .frame(height: pose == .happy ? Self.height * 1.2 : pose == .eyeBreak ? Self.height * (eyeFrame == persona.sprites.laptopFrame ? 0.95 : 1.25) : Self.height)
+                .frame(height: pose == .happy ? Self.height * 1.2 : pose == .eyeBreak ? Self.height * (eyeFrame == persona.sprites.askFrame ? 0.95 : 1.25) : Self.height)
                 .scaleEffect(pose == .eyeBreak ? 1 + 0.035 * sin(dt * 2 * .pi / 5) : 1, anchor: .bottom)   // slow breathing
                 .offset(y: pose == .happy ? -abs(sin(dt * 7)) * 14 : (pose == .eyeBreak && eyeFrame == persona.sprites.stretchFrame ? -abs(sin(dt * 2)) * 4 : 0))
         }

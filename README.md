@@ -39,7 +39,7 @@ It now starts automatically every time you log in. To just try it without instal
 
 ## Settings
 
-Choose **Settings…** (⌘,) in the menu-bar menu to change any timing: how often each reminder appears, how long "Maybe later" / "Not yet" / Esc wait before coming back, the eye-break length, and the minimum gap between reminders. Changes are saved and apply straight away; changing an interval restarts that countdown. **Reset to defaults** puts everything back.
+Choose **Settings…** (⌘,) in the menu-bar menu to pick which character nags you (female or male; each has their own messages and pop-ups) and to change any timing: how often each reminder appears, how long "Maybe later" / "Not yet" / Esc wait before coming back, the eye-break length, and the minimum gap between reminders. Changes are saved and apply straight away; changing an interval restarts that countdown. **Reset to defaults** puts everything back.
 
 ## Requirements
 
@@ -94,9 +94,9 @@ TINY_NUDGES_INTERVAL_SECONDS=20 TINY_NUDGES_EYE_INTERVAL_SECONDS=45 swift run Ti
   - `TimingSetting.swift` / `SettingsView.swift`: the adjustable timings and their Settings window
   - `EscapeHotKey.swift`: global Esc shortcut
   - `Persona.swift`: what a character is: sprites, bubble colours and every message
-  - `Personas/Female.swift`: the female character's messages and pop-ups
-  - `Resources/female/`: her sprite frames (each character gets its own folder)
-- `Frames/`: source sprite sheets
+  - `Personas/Female.swift`, `Personas/Male.swift`: each character's messages and pop-ups
+  - `Resources/female/`, `Resources/male/`: each character's sprite frames
+- `Frames/`: source sprite sheets (`Male …` ones are sliced into `Resources/male/` by `Scripts/slice_male_frames.py`)
 - `logo.png` / `Icon/AppIcon.icns`: the logo and the app icon made from it
 - `package.sh`: build, install and enable start-at-login
 

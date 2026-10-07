@@ -10,7 +10,7 @@ struct Persona: Identifiable {
     let sprites: SpriteCounts
     let script: Script
 
-    static let all: [Persona] = [.female]
+    static let all: [Persona] = [.female, .male]
     static let storageKey = "persona"
 
     /// The character the user picked (falls back to the first one).
@@ -26,11 +26,11 @@ struct Persona: Identifiable {
     }
 
     /// How many frames each sprite sequence has: Resources/<id>/<name>_<n>.png.
-    /// The eye-break frames are `eye` strain frames, then the laptop frame, then the stretch frame.
+    /// The eye-break frames are `eye_0…` followed by `relax_0…`, numbered as one list (`EyeSegment.frames`).
+    /// `askFrame` is the pose she holds while asking (and in the first step); `stretchFrame` is the one that bounces.
     struct SpriteCounts {
         let walkIn, walkOut, give, happy, sad, eye, relax: Int
-        var laptopFrame: Int { eye }
-        var stretchFrame: Int { eye + 1 }
+        let askFrame, stretchFrame: Int
     }
 
     /// All the words, per reminder.
