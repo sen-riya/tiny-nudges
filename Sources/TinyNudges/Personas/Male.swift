@@ -9,7 +9,7 @@ extension Persona {
         palette: Palette(ink: (0.13, 0.12, 0.14), cream: (0.98, 0.96, 0.92), aqua: (0.62, 0.80, 0.93),
                          blush: (0.94, 0.82, 0.62), gold: (1.0, 0.84, 0.40), apricot: (0.98, 0.86, 0.70)),
         sprites: SpriteCounts(walkIn: 5, walkOut: 5, give: 3, happy: 1, sad: 2, eye: 8, relax: 2,
-                              askFrame: 8, stretchFrame: 9),
+                              askFrame: 8, stretchFrame: 9, idle: 1),
         script: Script(
             waterYes: "Yeah, yeah", waterNo: "Later, bro",
             waterHappy: Message(title: "That's the way!", subtitle: "Hydration level: legend. See you in an hour."),

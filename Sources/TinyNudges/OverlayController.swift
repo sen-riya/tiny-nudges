@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-enum Pose { case walkIn, giveWater, happy, sad, eyeBreak, walkOut }
+enum Pose { case walkIn, giveWater, idle, happy, sad, eyeBreak, walkOut }
 enum Bubble { case greeting, question, happy, sad, eyeAsk, eyeLater, eyeStep, eyeDone }
 
 /// How a reminder ended.
@@ -37,7 +37,7 @@ final class OverlayController: ObservableObject {
         guard let session = await begin() else { return .later }
         if dismissed { return abort(session) }
 
-        setPose(.giveWater)
+        setPose(persona.sprites.idle > 0 ? .idle : .giveWater)   // some characters strike a pose instead of offering the glass
         await pause(0.8)
         bubble = .greeting
         await pause(2.2)

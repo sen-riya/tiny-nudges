@@ -31,6 +31,8 @@ struct Persona: Identifiable {
     struct SpriteCounts {
         let walkIn, walkOut, give, happy, sad, eye, relax: Int
         let askFrame, stretchFrame: Int
+        /// Frames of an optional standing pose held while talking after walking in (0 = none: she holds the glass out).
+        var idle = 0
     }
 
     /// All the words, per reminder.

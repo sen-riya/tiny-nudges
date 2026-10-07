@@ -27,7 +27,7 @@ struct CharacterView: View {
 
 /// One persona's loaded frames, cached after the first use.
 private struct Sprites {
-    let walkIn, walkOut, give, happy, sad: [NSImage]
+    let walkIn, walkOut, give, happy, sad, idle: [NSImage]
     let eye: [NSImage]   // strain frames, then laptop, then stretch
 
     private static var cache: [String: Sprites] = [:]
@@ -38,7 +38,7 @@ private struct Sprites {
         let set = Sprites(
             walkIn: load("walkin", n.walkIn, persona.id), walkOut: load("walkout", n.walkOut, persona.id),
             give: load("give", n.give, persona.id), happy: load("happy", n.happy, persona.id),
-            sad: load("sad", n.sad, persona.id),
+            sad: load("sad", n.sad, persona.id), idle: load("idle", n.idle, persona.id),
             eye: load("eye", n.eye, persona.id) + load("relax", n.relax, persona.id))
         cache[persona.id] = set
         return set
@@ -49,6 +49,7 @@ private struct Sprites {
         case .walkIn: return walkIn[Int(t * 8) % walkIn.count]
         case .walkOut: return walkOut[Int(t * 8) % walkOut.count]
         case .giveWater: return give[min(give.count - 1, Int(t * 4))]   // plays once, holds the glass out
+        case .idle: return idle[0]
         case .happy: return happy[0]
         case .eyeBreak: return eye[0]
         case .sad: return sad[min(sad.count - 1, Int(t / 0.8))]          // looks down, then closes eyes

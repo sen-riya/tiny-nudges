@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Slice the male sprite sheets in Frames/ into Sources/TinyNudges/Resources/male/<name>_<n>.png.
 
-Each sheet is a row of transparent-background poses; Frames/Specific.png holds the eye-break poses. Frames of one sequence share a canvas
+Each sheet is a row of transparent-background poses; Frames/Specific.png holds the eye-break poses and "Male Cool pose .png" the standing pose. Frames of one sequence share a canvas
 (so the character doesn't jump around) scaled to a fixed height, like the female frames.
 Requires Pillow and numpy:  python3 Scripts/slice_male_frames.py
 """
@@ -31,6 +31,19 @@ def load(name):
     for i, size in enumerate(sizes, start=1):
         if size < 150: im[labels == i] = 0
     return im
+
+
+def cutout(name):
+    """An image with an opaque light background (the cool pose): make the background transparent."""
+    rgb = np.array(Image.open(SRC / name).convert("RGB")).astype(int)
+    pale = ((rgb.max(2) - rgb.min(2)) < 28) & (rgb.mean(2) > 95)   # grey-white, unlike skin, khaki or boots
+    labels, n = ndimage.label(pale)
+    edge = set(np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))) - {0}
+    below_waist = {i for i, c in enumerate(ndimage.center_of_mass(pale, labels, range(1, n + 1)), start=1)
+                   if c[0] > rgb.shape[0] * 0.65}   # pale gaps between the legs (the shirt is higher up)
+    bg = np.isin(labels, list(edge | below_waist))
+    alpha = ndimage.binary_erosion(~bg, iterations=1)   # trim the light fringe
+    return np.dstack([rgb.astype(np.uint8), alpha.astype(np.uint8) * 255])
 
 
 def split(im):
@@ -96,8 +109,10 @@ def main():
     save(canvas(split(load("Male Happy.png")), BODY_H)[0][:1], "happy")   # the jumping pose
     save(canvas(split(load("Male Sad.png")), BODY_H)[0], "sad")
 
-    # Eye break: 8 poses (0 = full body, 1-7 head-and-shoulders), then the laptop and yawn poses.
     sheet = load("Specific.png")
+    save(canvas([pose(cutout("Male Cool pose .png"), (0, 296, 0, 556))], BODY_H)[0], "idle")   # hands in pockets: the pose he strikes while talking
+
+    # Eye break: 8 poses (0 = full body, 1-7 head-and-shoulders), then the laptop and yawn poses.
     eyes = [pose(sheet, b) for b in EYE_BOXES]
     full, scale = canvas(eyes[:1], EYE_H)
     busts, _ = canvas(eyes[1:], EYE_H, scale * BUST_SCALE)
