@@ -19,6 +19,7 @@ struct CharacterView: View {
                 .interpolation(.high)
                 .aspectRatio(contentMode: .fit)
                 .frame(height: pose == .happy ? Self.height * 1.2 : pose == .eyeBreak ? Self.height * (eyeFrame == persona.sprites.askFrame ? 0.95 : 1.25) : Self.height)
+                .rotationEffect(.degrees(pose == .sad && sprites.sad.count == 1 ? sin(dt * 3) * 2.5 : 0), anchor: .bottom)   // a single sad frame sways instead of staying frozen
                 .scaleEffect(pose == .eyeBreak ? 1 + 0.035 * sin(dt * 2 * .pi / 5) : 1, anchor: .bottom)   // slow breathing
                 .offset(y: pose == .happy ? -abs(sin(dt * 7)) * 14 : (pose == .eyeBreak && eyeFrame == persona.sprites.stretchFrame ? -abs(sin(dt * 2)) * 4 : 0))
         }
