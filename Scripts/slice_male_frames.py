@@ -95,6 +95,10 @@ def canvas(frames, height, scale=None):
     return out, scale
 
 
+def mirrored(frames):
+    return [f.transpose(Image.FLIP_LEFT_RIGHT) for f in frames]
+
+
 def save(frames, name):
     for i, f in enumerate(frames):
         f.save(OUT / f"{name}_{i}.png", optimize=True)
@@ -103,8 +107,9 @@ def save(frames, name):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    save(canvas(split(load("Male Walk In.png")), BODY_H)[0], "walkin")
-    save(canvas(split(load("Male Walk Out.png")), BODY_H)[0], "walkout")
+    # He enters from the right edge walking left and leaves to the right; the sheets face the other way.
+    save(mirrored(canvas(split(load("Male Walk In.png")), BODY_H)[0]), "walkin")
+    save(mirrored(canvas(split(load("Male Walk Out.png")), BODY_H)[0]), "walkout")
     save(canvas(split(load("Male Give Water.png")), BODY_H)[0], "give")
     save(canvas(split(load("Male Happy.png")), BODY_H)[0][:1], "happy")   # the jumping pose
     save(canvas(split(load("Male Sad.png")), BODY_H)[0], "sad")
