@@ -83,7 +83,7 @@ final class OverlayController: ObservableObject {
         setPose(.eyeBreak)
         apply(0)
 
-        // Real clock, no skipping: she only leaves once the full minute has passed (or Esc is pressed).
+        // Real clock, no skipping: the character only leaves once the full minute has passed (or Esc is pressed).
         let start = Date()
         while !dismissed {
             let elapsed = Date().timeIntervalSince(start)
@@ -124,7 +124,7 @@ final class OverlayController: ObservableObject {
         }
     }
 
-    /// Esc: the character vanishes right away, wherever she is in the routine.
+    /// Esc: the character vanishes right away, wherever they are in the routine.
     func dismiss() {
         guard isShowing, !dismissed else { return }
         dismissed = true

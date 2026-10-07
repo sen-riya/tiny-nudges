@@ -8,15 +8,14 @@ extension Persona {
         name: "Male",
         palette: Palette(ink: (0.13, 0.12, 0.14), cream: (0.98, 0.96, 0.92), aqua: (0.62, 0.80, 0.93),
                          blush: (0.94, 0.82, 0.62), gold: (1.0, 0.84, 0.40), apricot: (0.98, 0.86, 0.70)),
-        sprites: SpriteCounts(walkIn: 5, walkOut: 5, give: 3, happy: 1, sad: 2, eye: 8, relax: 2,
+        sprites: SpriteCounts(walkIn: 5, walkOut: 5, give: 3, happy: 1, sad: 1, eye: 8, relax: 2,
                               askFrame: 8, stretchFrame: 9, idle: 1),
         script: Script(
             waterYes: "Ha, bhai Thik hai!", waterNo: "Nah! Later, bro!",
             waterHappy: Message(title: "Cool 👍!", subtitle: "See you in an hour."),
             waterSad: Message(title: "Ah!", subtitle: "Okay, okay. I'll be back in 15 minutes. Same glass."),
-        
             eyeYes: "Lessgo!", eyeNo: "Too much work bro - Later",
-            eyeLater: Message(title: "Ah! Fine ", subtitle: " Isme mera kya - I will be back in 10 minutes."),
+            eyeLater: Message(title: "Ah! Fine", subtitle: "Isme mera kya - I will be back in 10 minutes."),
             waterLines: [
                 Lines(greeting: "Oi, sunn!", title: "Drink some water", subtitle: "Your brain is running on fumes, bhai. One glass, quick."),
                 Lines(greeting: "Heyy yoouu! Yes, you.", title: "Time for some water", subtitle: "Go fill that glass. I'll wait right here."),
@@ -24,9 +23,7 @@ extension Persona {
                 Lines(greeting: "Hola !", title: "Drink some water", subtitle: "Your glass is getting lonely, bhai."),
                 Lines(greeting: "Yoo!", title: "Don't make me ask twice", subtitle: "Grab a glass of water. Takes one minute."),
             ],
-        
             eyeAsks: [
-    
                 EyeAsk(title: "Crazzy bro, you've been working this long?", subtitle: "Lessgo, get a break. One minute, eyes off the screen."),
                 EyeAsk(title: "Bhai!", subtitle: "Your eyes are begging for a break. Just 60 seconds, bhai."),
                 EyeAsk(title: "Get off the screen, bro", subtitle: "Lessgo, just one minute. Nothing is going to be on fire."),
@@ -38,7 +35,7 @@ extension Persona {
                 EyeSegment(title: "…and breathe out", subtitle: "Let it go, bhai. Yes, even that bug.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Stretch it out!", subtitle: "Arms up high. Reach for the sky!", seconds: 5, frames: [9], frameSeconds: 5),
                 EyeSegment(title: "Look over there!", subtitle: "Follow my eyes. Hmm, what's that?", seconds: 5, frames: [4], frameSeconds: 5),
-                EyeSegment(title: "Now the other way!", subtitle: "Slow eye rolls. Else we could turn into a zombie ", seconds: 5, frames: [5], frameSeconds: 5),
+                EyeSegment(title: "Now the other way!", subtitle: "Slow eye rolls. Else we could turn into a zombie", seconds: 5, frames: [5], frameSeconds: 5),
                 EyeSegment(title: "Breathe in again…", subtitle: "Shoulders down. Jaw unclenched. Yeah, that one.", seconds: 5, frames: [1], frameSeconds: 5, orb: .inhale),
                 EyeSegment(title: "…and all the way out", subtitle: "And relax. You're doing great, bro.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Big yawn time!", subtitle: "Stretch those arms and yawn like nobody's watching.", seconds: 5, frames: [9], frameSeconds: 5),

@@ -41,6 +41,10 @@ It now starts automatically every time you log in. To just try it without instal
 
 Choose **Settings…** (⌘,) in the menu-bar menu to pick which character nags you (female or male; each has their own messages and pop-ups) and to change any timing: how often each reminder appears, how long "Maybe later" / "Not yet" / Esc wait before coming back, the eye-break length, and the minimum gap between reminders. Changes are saved and apply straight away; changing an interval restarts that countdown. **Reset to defaults** puts everything back.
 
+## Characters
+
+Each character is a `Persona` (see `Sources/TinyNudges/Persona.swift`): sprites in `Resources/<id>/`, a bubble palette and all of their messages. `Personas/Female.swift` and `Personas/Male.swift` are the two included. To add another, write a `Persona`, drop its frames in a new `Resources/<id>/` folder and list it in `Persona.all`.
+
 ## Requirements
 
 - macOS 13 or later

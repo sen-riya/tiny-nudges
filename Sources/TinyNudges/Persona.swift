@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Everything that makes one character *that* character: her sprites (Resources/<id>/),
-/// bubble colours, and every word she says. To add a character, drop in a sprite folder,
+/// Everything that makes one character *that* character: its sprites (Resources/<id>/),
+/// bubble colours, and every word it says. To add a character, drop in a sprite folder,
 /// write a `Persona` like `Persona.female`, and list it in `Persona.all`.
 struct Persona: Identifiable {
     let id: String
@@ -27,11 +27,11 @@ struct Persona: Identifiable {
 
     /// How many frames each sprite sequence has: Resources/<id>/<name>_<n>.png.
     /// The eye-break frames are `eye_0…` followed by `relax_0…`, numbered as one list (`EyeSegment.frames`).
-    /// `askFrame` is the pose she holds while asking (and in the first step); `stretchFrame` is the one that bounces.
+    /// `askFrame` is the pose held while asking (and in the first step); `stretchFrame` is the one that bounces.
     struct SpriteCounts {
         let walkIn, walkOut, give, happy, sad, eye, relax: Int
         let askFrame, stretchFrame: Int
-        /// Frames of an optional standing pose held while talking after walking in (0 = none: she holds the glass out).
+        /// Frames of an optional standing pose held while talking after walking in (0 = none: the glass is held out instead).
         var idle = 0
     }
 
@@ -44,7 +44,7 @@ struct Persona: Identifiable {
         let waterLines: [Lines]
         let eyeAsks: [EyeAsk]
         let eyeSegments: [EyeSegment]
-        /// Said while walking back out (nil = she leaves silently).
+        /// Said while walking back out (nil = leaves silently).
         var bye: Message? = nil
 
         /// Length of the timed routine; the finale is shown afterwards and isn't counted.
