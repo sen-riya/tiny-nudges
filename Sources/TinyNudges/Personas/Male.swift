@@ -42,7 +42,7 @@ extension Persona {
                 EyeSegment(title: "Look far, far away", subtitle: "Woah Crazyyy, you can see the whole room. Pick a spot and focus.", seconds: 5, frames: [3, 4], frameSeconds: 2.5),
                 EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. Dammmmnn, you look brand new. Go crush it!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ],
-            bye: Message(title: "Catch you later!", subtitle: "Cool, will see you soon.")
+            bye: Message(title: "Ok, bye!", subtitle: "Cool, will see you soon.")
         )
     )
 }
