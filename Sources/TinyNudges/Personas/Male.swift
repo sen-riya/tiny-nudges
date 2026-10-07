@@ -33,7 +33,7 @@ extension Persona {
             ],
             eyeSegments: [
                 EyeSegment(title: "Screens off, eyes up!", subtitle: "Lessgo, bhai. This minute is all yours.", seconds: 5, frames: [8], frameSeconds: 5),
-                EyeSegment(title: "Glasses off!", subtitle: "Feels so good nah ?. Let those eyes breathe.", seconds: 5, frames: [0, 1, 2, 3], frameSeconds: 1.25),
+                EyeSegment(title: "Glasses off!", subtitle: "Feels so good nah?. Let those eyes breathe.", seconds: 5, frames: [0, 1, 2, 3], frameSeconds: 1.25),
                 EyeSegment(title: "Breathe in…", subtitle: "Slow and easy. Follow the bubble.", seconds: 5, frames: [1], frameSeconds: 5, orb: .inhale),
                 EyeSegment(title: "…and breathe out", subtitle: "Let it go, bhai. Yes, even that bug.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Stretch it out!", subtitle: "Arms up high. Reach for the sky!", seconds: 5, frames: [9], frameSeconds: 5),
