@@ -15,7 +15,7 @@ extension Persona {
             waterHappy: Message(title: "Cool 👍!", subtitle: "See you in an hour."),
             waterSad: Message(title: "Ah!", subtitle: "Okay, okay. I'll be back in 15 minutes. Same glass."),
         
-            eyeYes: "Lessgo!", eyeNo: "Too much work bro - Will take a break later",
+            eyeYes: "Lessgo!", eyeNo: "Too much work bro - Later",
             eyeLater: Message(title: "Ah! Fine ", subtitle: " Isme mera kya - I will be back in 10 minutes."),
             waterLines: [
                 Lines(greeting: "Oi, sunn!", title: "Drink some water", subtitle: "Your brain is running on fumes, bhai. One glass, quick."),
@@ -28,17 +28,17 @@ extension Persona {
             eyeAsks: [
     
                 EyeAsk(title: "Crazzy bro, you've been working this long?", subtitle: "Lessgo, get a break. One minute, eyes off the screen."),
-                EyeAsk(title: "Oi, sunn!", subtitle: "Your eyes are begging for a break. Just 60 seconds, bhai."),
-                EyeAsk(title: "The screen can wait, bro", subtitle: "Lessgo, one minute. Nothing on it is on fire."),
+                EyeAsk(title: "Bhai!", subtitle: "Your eyes are begging for a break. Just 60 seconds, bhai."),
+                EyeAsk(title: "Get off the screen, bro", subtitle: "Lessgo, just one minute. Nothing is going to be on fire."),
             ],
             eyeSegments: [
                 EyeSegment(title: "Screens off, eyes up!", subtitle: "Lessgo, bhai. This minute is all yours.", seconds: 5, frames: [8], frameSeconds: 5),
-                EyeSegment(title: "Glasses off!", subtitle: "Ohh Bhai, that feels good. Let those eyes breathe.", seconds: 5, frames: [0, 1, 2, 3], frameSeconds: 1.25),
+                EyeSegment(title: "Glasses off!", subtitle: "Feels so good nah ?. Let those eyes breathe.", seconds: 5, frames: [0, 1, 2, 3], frameSeconds: 1.25),
                 EyeSegment(title: "Breathe in…", subtitle: "Slow and easy. Follow the bubble.", seconds: 5, frames: [1], frameSeconds: 5, orb: .inhale),
                 EyeSegment(title: "…and breathe out", subtitle: "Let it go, bhai. Yes, even that bug.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Stretch it out!", subtitle: "Arms up high. Reach for the sky!", seconds: 5, frames: [9], frameSeconds: 5),
                 EyeSegment(title: "Look over there!", subtitle: "Follow my eyes. Hmm, what's that?", seconds: 5, frames: [4], frameSeconds: 5),
-                EyeSegment(title: "Now the other way!", subtitle: "Slow eye rolls. Nobody's watching. (I am.)", seconds: 5, frames: [5], frameSeconds: 5),
+                EyeSegment(title: "Now the other way!", subtitle: "Slow eye rolls. Else we could turn into a zombie ", seconds: 5, frames: [5], frameSeconds: 5),
                 EyeSegment(title: "Breathe in again…", subtitle: "Shoulders down. Jaw unclenched. Yeah, that one.", seconds: 5, frames: [1], frameSeconds: 5, orb: .inhale),
                 EyeSegment(title: "…and all the way out", subtitle: "And relax. You're doing great, bro.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Big yawn time!", subtitle: "Stretch those arms and yawn like nobody's watching.", seconds: 5, frames: [9], frameSeconds: 5),
