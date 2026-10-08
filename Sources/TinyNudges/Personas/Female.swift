@@ -40,6 +40,7 @@ extension Persona {
                 EyeSegment(title: "Look far, far away", subtitle: "Pick something across the room and stare like you mean it.", seconds: 5, frames: [3, 4], frameSeconds: 2.5),
                 EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. You deserved that. Go be brilliant!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ]
-        )
+        ),
+        avatarSprite: "eye_0"
     )
 }

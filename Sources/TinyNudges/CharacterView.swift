@@ -57,11 +57,25 @@ private struct Sprites {
         }
     }
 
+    static func image(named name: String, folder: String) -> NSImage? {
+        Bundle.module.url(forResource: name, withExtension: "png", subdirectory: "Resources/\(folder)")
+            .flatMap(NSImage.init(contentsOf:))
+    }
+
     /// Frames that exist on disk; a count larger than the files provided is tolerated (extra frames are skipped).
     private static func load(_ name: String, _ count: Int, _ folder: String) -> [NSImage] {
         (0..<count).compactMap { i in
             Bundle.module.url(forResource: "\(name)_\(i)", withExtension: "png", subdirectory: "Resources/\(folder)")
                 .flatMap(NSImage.init(contentsOf:))
         }
+    }
+}
+
+extension Persona {
+    /// The picture shown in menus: `avatarSprite` if set, else the standing pose, else the happy one.
+    var avatar: NSImage {
+        if let name = avatarSprite, let image = Sprites.image(named: name, folder: id) { return image }
+        let set = Sprites.set(for: self)
+        return set.idle.first ?? set.happy.first ?? NSImage()
     }
 }

@@ -9,6 +9,8 @@ struct Persona: Identifiable {
     let palette: Palette
     let sprites: SpriteCounts
     let script: Script
+    /// Sprite file (without .png) used as the menu avatar; nil = the standing pose, else the happy one.
+    var avatarSprite: String? = nil
 
     static let all: [Persona] = [.female, .male]
     static let storageKey = "persona"

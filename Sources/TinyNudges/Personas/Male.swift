@@ -13,7 +13,7 @@ extension Persona {
         script: Script(
             waterYes: "Ha, bhai Thik hai!", waterNo: "Nah! Later, bro!",
             waterHappy: Message(title: "Cool 👍!", subtitle: "See you in an hour."),
-            waterSad: Message(title: "Ah!", subtitle: "Okay, okay. I'll be back in 15 minutes. Same glass."),
+            waterSad: Message(title: "Ah!", subtitle: " Could have just hydrated , Ill have to nudge again. Pheww!"),
             eyeYes: "Lessgo!", eyeNo: "Too much work bro - Later",
             eyeLater: Message(title: "Ah! Fine", subtitle: "Isme mera kya - I will be back in 10 minutes."),
             waterLines: [
@@ -30,7 +30,7 @@ extension Persona {
             ],
             eyeSegments: [
                 EyeSegment(title: "Screens off, eyes up!", subtitle: "Lessgo, bhai. This minute is all yours.", seconds: 5, frames: [8], frameSeconds: 5),
-                EyeSegment(title: "Glasses off!", subtitle: "Feels so good nah?. Let those eyes breathe.", seconds: 5, frames: [0, 1, 2, 3], frameSeconds: 1.25),
+                EyeSegment(title: "Glasses off!", subtitle: "Feels so good nah?. Let those eyes breathe.", seconds: 5, frames: [7, 1], frameSeconds: 2.5),
                 EyeSegment(title: "Breathe in…", subtitle: "Slow and easy. Follow the bubble.", seconds: 5, frames: [1], frameSeconds: 5, orb: .inhale),
                 EyeSegment(title: "…and breathe out", subtitle: "Let it go, bhai. Yes, even that bug.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Stretch it out!", subtitle: "Arms up high. Reach for the sky!", seconds: 5, frames: [9], frameSeconds: 5),
@@ -40,7 +40,7 @@ extension Persona {
                 EyeSegment(title: "…and all the way out", subtitle: "And relax. You're doing great, bro.", seconds: 5, frames: [1], frameSeconds: 5, orb: .exhale),
                 EyeSegment(title: "Big yawn time!", subtitle: "Stretch those arms and yawn like nobody's watching.", seconds: 5, frames: [9], frameSeconds: 5),
                 EyeSegment(title: "Look far, far away", subtitle: "Woah Crazyyy, you can see the whole room. Pick a spot and focus.", seconds: 5, frames: [3, 4], frameSeconds: 2.5),
-                EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. Dammmmnn Bro, you look brand new. Go crush it!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
+                EyeSegment(title: "Glass back on!", subtitle: "Dammmmnn Bro, you look brand new. Go crush it!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ],
         )
     )

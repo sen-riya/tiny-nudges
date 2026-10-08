@@ -2,23 +2,144 @@
 
 # Tiny Nudges
 
-A tiny macOS menu-bar app that nags you, cheerfully, to look after yourself. A little animated character walks onto your screen to remind you to:
+A tiny macOS menu-bar app that nags you, cheerfully, to look after yourself. A little animated character walks onto your screen, chats to you in a speech bubble, and reminds you to:
 
 - **Drink water**: every hour.
-- **Take an eye break**: every 3 hours, a one-minute guided break (glasses off, breathe in/out, stretch, look away).
+- **Take an eye break**: every 3 hours, a one-minute guided routine (glasses off, breathe in and out, stretch, look away).
 
-The two reminders never show back-to-back (at least a 10-minute gap), and the app lives only in the menu bar (no Dock icon). The menu shows when the next reminders are due and lets you trigger either one immediately.
+You choose who nags you: a **female** or a **male** character. Each has their own sprites, colours and messages. The app lives only in the menu bar (no Dock icon), and the two reminders never show back-to-back (at least a 10-minute gap).
 
-## Behaviour
+## Contents
 
-| Reminder | Default interval | "Maybe later" / "Not yet" | Esc (dismiss) |
-|----------|------------------|---------------------------|---------------|
+- [How it works](#how-it-works)
+- [The menu-bar popover](#the-menu-bar-popover)
+- [Settings](#settings)
+- [Characters](#characters)
+- [Install](#install)
+- [Customising](#customising)
+- [Testing with short timings](#testing-with-short-timings)
+- [Project layout](#project-layout)
+- [License](#license)
+
+## How it works
+
+### Water reminder
+
+1. The character **walks in** from the right edge of the screen.
+2. They greet you in a speech bubble, then ask you to drink some water with two buttons (yes / later). The greeting is picked at random from a handful, so it doesn't get stale.
+3. They **react** to your answer:
+   - **Yes**: a happy, cheering reaction, then they walk out.
+   - **Later**: a disappointed reaction (a side-eye for the male character), then they walk out. They come back after the snooze delay.
+4. If the character has a goodbye line, it rides along with them as they **walk back out**.
+
+### Eye break
+
+1. The character walks in and **asks** if you want a break (one of a few pitches, picked at random), with a yes button and a not-now button.
+2. **Not now** and they leave, then come back after the snooze delay.
+3. **Yes** starts a guided routine. A step bubble pops up for each moment, and a segmented bar fills as you go:
+
+   | Steps | What happens |
+   |-------|--------------|
+   | 1 | Screens off, eyes up |
+   | 2 | Glasses off |
+   | 3, 4 | Breathe in, breathe out (a circle swells and shrinks with the breath) |
+   | 5 | Stretch |
+   | 6, 7 | Look over there, then the other way |
+   | 8, 9 | Breathe in again, breathe out |
+   | 10 | Big yawn |
+   | 11 | Look far away |
+
+   These 11 steps share the **break length** (60 seconds by default) equally, on a real clock, so the routine always lasts as long as you set. Only after the whole routine is done does the **finale** bubble ("fresh eyes") appear for a few seconds, and then the character walks out.
+
+### Esc
+
+Press **Esc** at any time while the character is on screen and they vanish immediately. The reminder comes back after the Esc delay. Esc is registered as a system hot key, so no Accessibility permission is needed.
+
+### Defaults
+
+| Reminder | Default interval | "Later" / "Not now" | Esc |
+|----------|------------------|---------------------|-----|
 | Water | 60 min | back in 15 min | back in 15 min |
 | Eye break | 3 h | back in 10 min | back in 15 min |
 
-Pressing **Esc** while the character is on screen dismisses it. It's registered as a system hot key, so no Accessibility permission is needed.
+The eye break lasts 60 seconds by default, and there is at least a 10-minute gap between any two reminders. Every one of these can be changed in [Settings](#settings).
 
-## Download and install
+## The menu-bar popover
+
+Click the water-drop icon in the menu bar. The popover is themed with the current character's colours and has:
+
+- **A header** with the character's picture and a **character picker**: tap the other character's round avatar to switch who nags you. The change shows up the next time a reminder appears.
+- **A Water card and an Eye break card.** Each shows when the reminder is next due (for example "7:23 PM · in 3 h", counting down by itself) and a **Now** button to run it immediately. The popover closes when you press it, so the character isn't hidden behind it.
+- **Settings…** (⌘,) and **Quit**.
+
+Only one copy of the app can run: if you start a second one, it quits straight away, so you'll never see two menu-bar icons.
+
+## Settings
+
+Open **Settings…** from the popover. It uses the same look as the popover, with each setting shown as a title, a short description and its current value with a stepper. Changes are saved and apply straight away; changing an interval restarts that countdown. **Reset to defaults** puts everything back.
+
+| Group | Setting | What it does | Default |
+|-------|---------|--------------|---------|
+| Water | Reminder interval | How often a water reminder appears | 60 min |
+| Water | Snooze delay | Wait before asking again when you say later | 15 min |
+| Eye break | Reminder interval | How often an eye break is suggested | 180 min |
+| Eye break | Snooze delay | Wait before asking again when you say not now | 10 min |
+| Eye break | Break length | How long the guided routine runs | 60 sec |
+| Both | Esc delay | Wait before coming back after you press Esc | 15 min |
+| Both | Minimum gap | Least time between a water reminder and an eye break | 10 min |
+
+## Characters
+
+Both characters have the same set of animations: walking in and out, offering the water, a happy reaction, a sad or side-eye reaction, and the eye-break poses. What differs is the artwork, the colours and every word they say.
+
+| | Female | Male |
+|---|--------|------|
+| Look | Long dark hair, cream suit, gold earrings, glasses | Black hoodie, khaki cargo trousers, brown boots, glasses |
+| Water | Holds the glass out while she talks | Strikes a standing, hands-in-pockets pose while he talks |
+| Said no | A sad, then eyes-closed reaction | A swaying side-eye |
+| Eye break | Lies down with a laptop, then glasses and stretches | Lies down with a laptop, then glasses, stretches and a yawn |
+| Voice | Warm and playful | Casual, with "Oi, sunn!", "Lessgo!", "Dammmmnn" and friends |
+
+### How a character is built
+
+Each character is a `Persona` (`Sources/TinyNudges/Persona.swift`). It bundles:
+
+- the character's **id** and name,
+- a **colour palette** for the speech bubbles and the popover,
+- **sprite counts**: how many frames each animation has, which frame is held while asking, which one bounces when stretching, and an optional standing pose,
+- a **script**: the button labels, the water greetings and replies, the eye-break pitches, the twelve routine steps and an optional goodbye,
+- an optional **menu avatar** (a sprite file shown in the popover).
+
+`Personas/Female.swift` and `Personas/Male.swift` are the two included. The selected character is stored in your preferences and picked up fresh each time a reminder appears.
+
+### Adding another character
+
+1. Make a folder `Sources/TinyNudges/Resources/<id>/` with PNG frames named `<animation>_<number>.png`: `walkin`, `walkout`, `give`, `happy`, `sad` and `eye` (plus `relax` for the laptop and stretch poses, and `idle` if the character should stand while talking). Frames in one animation should share the same canvas size so the character doesn't jump.
+2. Copy `Personas/Male.swift`, rename it, and fill in the palette, sprite counts and messages.
+3. Add it to `Persona.all` in `Persona.swift`.
+4. Run `./package.sh`. The popover picker shows every character in `Persona.all`.
+
+Walk frames must face the way the character moves: **left** when walking in (they enter from the right edge) and **right** when walking out.
+
+### Making sprites from sheets
+
+The source artwork lives in `Frames/` as sprite sheets. The male sheets are sliced into frames by a script:
+
+```sh
+python3 Scripts/slice_male_frames.py
+```
+
+It needs Python 3 with `Pillow`, `numpy` and `scipy` (`pip3 install pillow numpy scipy`). The script:
+
+- splits each sheet into its poses,
+- removes backgrounds, including faint halos and stray specks,
+- scales every frame in an animation onto one shared canvas,
+- mirrors the walk frames so they face the right way,
+- writes the results to `Sources/TinyNudges/Resources/male/`.
+
+It reads `Male Walk In/Out`, `Male Give Water`, `Male Happy`, `male side eye`, `Male Cool pose` and `Specific` (the eye-break poses) from `Frames/`. The female frames were already sliced and live in `Resources/female/`.
+
+## Install
 
 Tiny Nudges is built from source; there is no pre-built download. You need a Mac running macOS 13 or later.
 
@@ -33,37 +154,18 @@ Tiny Nudges is built from source; there is no pre-built download. You need a Mac
    ```sh
    ./package.sh
    ```
-4. Look for the water-drop icon in the menu bar. Use **Water reminder now** in its menu to see the character straight away.
+4. Look for the water-drop icon in the menu bar. Press **Now** on a card to see the character straight away.
 
-It now starts automatically every time you log in. To just try it without installing, run `swift run TinyNudges` instead of step 3.
+It then starts automatically every time you log in. To just try it without installing, run `swift run TinyNudges` instead of step 3.
 
-## Settings
-
-Choose **Settings…** (⌘,) in the menu-bar menu to pick which character nags you (female or male; each has their own messages and pop-ups) and to change any timing: how often each reminder appears, how long "Maybe later" / "Not yet" / Esc wait before coming back, the eye-break length, and the minimum gap between reminders. Changes are saved and apply straight away; changing an interval restarts that countdown. **Reset to defaults** puts everything back.
-
-## Characters
-
-Each character is a `Persona` (see `Sources/TinyNudges/Persona.swift`): sprites in `Resources/<id>/`, a bubble palette and all of their messages. `Personas/Female.swift` and `Personas/Male.swift` are the two included. To add another, write a `Persona`, drop its frames in a new `Resources/<id>/` folder and list it in `Persona.all`.
-
-## Requirements
+### Requirements
 
 - macOS 13 or later
 - Swift 5.9+ toolchain (Xcode or Command Line Tools)
 
-## Build and run
+### What the installer does
 
-```sh
-swift build -c release
-swift run TinyNudges
-```
-
-## What the installer does
-
-```sh
-./package.sh
-```
-
-This builds a release binary, creates `~/Applications/Tiny Nudges.app`, ad-hoc signs it, and registers a LaunchAgent so it starts at login. Edit `LABEL` at the top of `package.sh` to use your own bundle identifier.
+`./package.sh` builds a release binary, creates `~/Applications/Tiny Nudges.app` (with the app icon), ad-hoc signs it, and registers a LaunchAgent so it starts at login. Run it again any time to reinstall after you change the code. Edit `LABEL` at the top of `package.sh` to use your own bundle identifier.
 
 To uninstall:
 
@@ -71,6 +173,12 @@ To uninstall:
 launchctl bootout "gui/$(id -u)/com.tinynudges.app"
 rm -rf "$HOME/Applications/Tiny Nudges.app" "$HOME/Library/LaunchAgents/com.tinynudges.app.plist"
 ```
+
+## Customising
+
+- **Change what a character says:** edit `Personas/Female.swift` or `Personas/Male.swift`, then run `./package.sh`. The speech bubbles fit their text: they are as narrow as short text allows and grow (up to about 290 pt wide) to wrap long text. The two buttons sit side by side when their labels are short and stack when a label is long.
+- **Change colours:** edit the `palette` of the character.
+- **Change timings:** use Settings, or the [environment variables](#testing-with-short-timings) while testing.
 
 ## Testing with short timings
 
@@ -83,24 +191,29 @@ TINY_NUDGES_INTERVAL_SECONDS=20 TINY_NUDGES_EYE_INTERVAL_SECONDS=45 swift run Ti
 | Variable | Meaning |
 |----------|---------|
 | `TINY_NUDGES_INTERVAL_SECONDS` | water interval |
-| `TINY_NUDGES_SNOOZE_SECONDS` | water "Maybe later" delay |
+| `TINY_NUDGES_SNOOZE_SECONDS` | water "later" delay |
 | `TINY_NUDGES_EYE_INTERVAL_SECONDS` | eye-break interval |
-| `TINY_NUDGES_EYE_SNOOZE_SECONDS` | eye-break "Not yet" delay |
+| `TINY_NUDGES_EYE_SNOOZE_SECONDS` | eye-break "not now" delay |
 | `TINY_NUDGES_EYE_DURATION_SECONDS` | eye-break length |
 | `TINY_NUDGES_DISMISS_SECONDS` | delay after pressing Esc |
 | `TINY_NUDGES_GAP_SECONDS` | minimum gap between the two reminders |
 
+To start with a particular character, pass it as a launch argument: `swift run TinyNudges -persona male`.
+
 ## Project layout
 
 - `Sources/TinyNudges/`: app code (SwiftUI + AppKit)
+  - `TinyNudgesApp.swift`: app entry point (menu-bar popover and Settings window)
+  - `MenuBarView.swift`: the menu-bar popover
+  - `SettingsView.swift` / `TimingSetting.swift`: the Settings window and the adjustable timings
   - `NudgeScheduler.swift`: decides when each reminder shows
-  - `OverlayController.swift` / `OverlayView.swift` / `CharacterView.swift`: the on-screen character and its animations
-  - `TimingSetting.swift` / `SettingsView.swift`: the adjustable timings and their Settings window
-  - `EscapeHotKey.swift`: global Esc shortcut
-  - `Persona.swift`: what a character is: sprites, bubble colours and every message
-  - `Personas/Female.swift`, `Personas/Male.swift`: each character's messages and pop-ups
+  - `OverlayController.swift` / `OverlayView.swift` / `CharacterView.swift`: the on-screen character, the speech bubbles and the sprite animations
+  - `EscapeHotKey.swift`: the global Esc shortcut
+  - `Persona.swift`: what a character is (palette, sprites, messages)
+  - `Personas/Female.swift`, `Personas/Male.swift`: each character's content
   - `Resources/female/`, `Resources/male/`: each character's sprite frames
-- `Frames/`: source sprite sheets (`Male …` ones are sliced into `Resources/male/` by `Scripts/slice_male_frames.py`)
+- `Frames/`: source sprite sheets
+- `Scripts/slice_male_frames.py`: slices the male sheets into frames
 - `logo.png` / `Icon/AppIcon.icns`: the logo and the app icon made from it
 - `package.sh`: build, install and enable start-at-login
 
