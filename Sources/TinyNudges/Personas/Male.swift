@@ -5,7 +5,7 @@ extension Persona {
     /// Eye frames: 0 full body, 1-7 head-and-shoulders (glasses off, thinking, looking, glasses on), 8 lying with the laptop (his staple pose), 9 yawn.
     static let male = Persona(
         id: "male",
-        name: "Bunty",
+        name: "Jugaadu Raju",
         palette: Palette(ink: (0.13, 0.12, 0.14), cream: (0.98, 0.96, 0.92), aqua: (0.62, 0.80, 0.93),
                          blush: (0.94, 0.82, 0.62), gold: (1.0, 0.84, 0.40), apricot: (0.98, 0.86, 0.70)),
         sprites: SpriteCounts(walkIn: 5, walkOut: 5, give: 3, happy: 1, sad: 1, eye: 8, relax: 2,

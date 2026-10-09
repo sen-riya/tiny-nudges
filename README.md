@@ -7,7 +7,7 @@ A tiny macOS menu-bar app that nags you, cheerfully, to look after yourself. A l
 - **Drink water**: every hour.
 - **Take an eye break**: every 3 hours, a one-minute guided routine (glasses off, breathe in and out, stretch, look away).
 
-You choose who nags you: **Sunny** or **Bunty**, and you can pick a different one for water and for eye breaks. Each has their own sprites, colours and messages. The app lives only in the menu bar (no Dock icon), and the two reminders never show back-to-back (at least a 10-minute gap).
+You choose who nags you from a list of characters, and you can pick a different one for water and for eye breaks. Each character has their own name, sprites, colours and messages. The app lives only in the menu bar (no Dock icon), and the two reminders never show back-to-back (at least a 10-minute gap).
 
 ## Contents
 
@@ -29,7 +29,7 @@ You choose who nags you: **Sunny** or **Bunty**, and you can pick a different on
 2. They greet you in a speech bubble, then ask you to drink some water with two buttons (yes / later). The greeting is picked at random from a handful, so it doesn't get stale.
 3. They **react** to your answer:
    - **Yes**: a happy, cheering reaction, then they walk out.
-   - **Later**: a disappointed reaction (a side-eye for Bunty), then they walk out. They come back after the snooze delay.
+   - **Later**: a disappointed reaction (for example a side-eye, depending on the character), then they walk out. They come back after the snooze delay.
 4. If the character has a goodbye line, it rides along with them as they **walk back out**.
 
 ### Eye break
@@ -91,9 +91,11 @@ Open **Settings…** from the popover. It uses the same look as the popover, wit
 
 ## Characters
 
-Both characters have the same set of animations: walking in and out, offering the water, a happy reaction, a sad or side-eye reaction, and the eye-break poses. What differs is the artwork, the colours and every word they say.
+Every character has the same set of animations: walking in and out, offering the water, a happy reaction, a sad or side-eye reaction, and the eye-break poses. What differs is the artwork, the colours and every word they say.
 
-| | Sunny (female) | Bunty (male) |
+The table compares the two characters that ship with the app, as examples of how far characters can differ.
+
+| | `female` | `male` |
 |---|--------|------|
 | Look | Long dark hair, cream suit, gold earrings, glasses | Black hoodie, khaki cargo trousers, brown boots, glasses |
 | Water | Holds the glass out while she talks | Strikes a standing, hands-in-pockets pose while he talks |
@@ -112,7 +114,7 @@ Each character is a `Persona` (`Sources/TinyNudges/Persona.swift`). It bundles:
 - optional **menu wording** (`ui`): the popover tagline, the Settings subtitle, the Save / Saved labels and the "glasses" counter text. Every field has a neutral default, so a new character only sets what it wants to say differently,
 - an optional **menu avatar** (a sprite file shown in the character list).
 
-`Personas/Female.swift` (Sunny) and `Personas/Male.swift` (Bunty) are the two included. The character chosen for each reminder is stored in your preferences and picked up fresh each time that reminder appears.
+`Personas/Female.swift` and `Personas/Male.swift` are the two included examples. The character chosen for each reminder is stored in your preferences and picked up fresh each time that reminder appears.
 
 ### Adding another character
 

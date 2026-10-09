@@ -4,7 +4,7 @@ extension Persona {
     /// The original character: chocolate hair, cream suit, gold earrings. Sprites live in Resources/female/.
     static let female = Persona(
         id: "female",
-        name: "Sunny",
+        name: "Chatpati Naina",
         palette: Palette(ink: (0.25, 0.15, 0.12), cream: (1.0, 0.965, 0.92), aqua: (0.60, 0.86, 0.84),
                          blush: (1.0, 0.78, 0.78), gold: (1.0, 0.84, 0.45), apricot: (1.0, 0.84, 0.68)),
         sprites: SpriteCounts(walkIn: 4, walkOut: 4, give: 3, happy: 1, sad: 2, eye: 8, relax: 2, askFrame: 8, stretchFrame: 9),
