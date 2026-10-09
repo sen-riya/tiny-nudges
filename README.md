@@ -42,14 +42,14 @@ You choose who nags you from a list of characters, and you can pick a different 
    |-------|--------------|
    | 1 | Screens off, eyes up |
    | 2 | Glasses off |
-   | 3, 4 | Breathe in, breathe out (a circle swells and shrinks with the breath) |
-   | 5 | Stretch |
-   | 6, 7 | Look over there, then the other way |
-   | 8, 9 | Breathe in again, breathe out |
-   | 10 | Big yawn |
-   | 11 | Look far away |
+   | 3 | Breathe in, breathe out (a circle swells and shrinks with the breath) |
+   | 4 | Stretch |
+   | 5 | Look over there, then the other way |
+   | 6 | Breathe in again, breathe out |
+   | 7 | Big yawn |
+   | 8 | Look far away |
 
-   These 11 steps share the **break length** (60 seconds by default) equally, on a real clock, so the routine always lasts as long as you set. Only after the whole routine is done does the **finale** bubble ("fresh eyes") appear for a few seconds, and then the character walks out.
+   These 8 steps share the **break length** (60 seconds by default) equally, on a real clock, so the routine always lasts as long as you set. Only after the whole routine is done does the **finale** bubble ("fresh eyes") appear for a few seconds, and then the character walks out.
 
 ### Esc
 
