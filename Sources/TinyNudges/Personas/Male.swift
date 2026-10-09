@@ -5,7 +5,7 @@ extension Persona {
     /// Eye frames: 0 full body, 1-7 head-and-shoulders (glasses off, thinking, looking, glasses on), 8 lying with the laptop (his staple pose), 9 yawn.
     static let male = Persona(
         id: "male",
-        name: "Male",
+        name: "Bunty",
         palette: Palette(ink: (0.13, 0.12, 0.14), cream: (0.98, 0.96, 0.92), aqua: (0.62, 0.80, 0.93),
                          blush: (0.94, 0.82, 0.62), gold: (1.0, 0.84, 0.40), apricot: (0.98, 0.86, 0.70)),
         sprites: SpriteCounts(walkIn: 5, walkOut: 5, give: 3, happy: 1, sad: 1, eye: 8, relax: 2,
@@ -42,6 +42,8 @@ extension Persona {
                 EyeSegment(title: "Look far, far away", subtitle: "Woah Crazyyy, you can see the whole room. Pick a spot and focus.", seconds: 5, frames: [3, 4], frameSeconds: 2.5),
                 EyeSegment(title: "Glass back on!", subtitle: "Dammmmnn Bro, you look brand new. Go crush it!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ],
-        )
+        ),
+        ui: UIText(menuTagline: "Got your back, bro", settingsSubtitle: "Set it up, then hit Save, bhai",
+                   save: "Save, bro", saved: "Done, bro", glassesOne: "1 glass, nice", glassesMany: "%d glasses, nice")
     )
 }

@@ -68,7 +68,8 @@ The eye break lasts 60 seconds by default, and there is at least a 10-minute gap
 
 Click the water-drop icon in the menu bar. The popover is themed with the current character's colours and has:
 
-- **A header** with the character's picture and a **character picker**: tap the other character's round avatar to switch who nags you. The change shows up the next time a reminder appears.
+- **A header** with the water character's picture.
+- **A "Nagged by" pull-down on each card**, so water and eye breaks can have different characters (the list grows as you add characters). The change shows up the next time that reminder appears.
 - **A Water card and an Eye break card.** Each shows when the reminder is next due (for example "7:23 PM · in 3 h", counting down by itself) and a **Now** button to run it immediately. The popover closes when you press it, so the character isn't hidden behind it.
 - **Settings…** (⌘,) and **Quit**.
 
@@ -92,7 +93,7 @@ Open **Settings…** from the popover. It uses the same look as the popover, wit
 
 Both characters have the same set of animations: walking in and out, offering the water, a happy reaction, a sad or side-eye reaction, and the eye-break poses. What differs is the artwork, the colours and every word they say.
 
-| | Female | Male |
+| | Sunny (female) | Bunty (male) |
 |---|--------|------|
 | Look | Long dark hair, cream suit, gold earrings, glasses | Black hoodie, khaki cargo trousers, brown boots, glasses |
 | Water | Holds the glass out while she talks | Strikes a standing, hands-in-pockets pose while he talks |

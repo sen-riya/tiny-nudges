@@ -16,8 +16,8 @@ final class NudgeScheduler: ObservableObject {
 
     @Published private(set) var nextWater: Date
     @Published private(set) var nextEye: Date
-    /// Bumped on "Reset to defaults" so the settings rows reload their values.
-    @Published private(set) var resetCount = 0
+    /// "Yes" answers to the water reminder today; starts over at midnight.
+    @Published private(set) var glassesToday = NudgeScheduler.storedGlasses()
     private let overlay = OverlayController()
     private var timer: Timer?
 
@@ -34,12 +34,6 @@ final class NudgeScheduler: ObservableObject {
     func rescheduleWater() { nextWater = Date().addingTimeInterval(waterInterval) }
     func rescheduleEye() { nextEye = Date().addingTimeInterval(eyeInterval) }
 
-    func settingsReset() {
-        resetCount += 1
-        rescheduleWater()
-        rescheduleEye()
-    }
-
     func waterNow() {
         guard !overlay.isShowing else { return }
         Task { await showWater() }
@@ -50,7 +44,24 @@ final class NudgeScheduler: ObservableObject {
         Task { await showEyeBreak() }
     }
 
+    private static let glassesKey = "glassesToday"
+    private static let glassesDayKey = "glassesDay"
+    private static var todayStamp: String { Calendar.current.startOfDay(for: Date()).formatted(.iso8601.year().month().day()) }
+
+    private static func storedGlasses() -> Int {
+        let d = UserDefaults.standard
+        return d.string(forKey: glassesDayKey) == todayStamp ? d.integer(forKey: glassesKey) : 0
+    }
+
+    private func addGlass() {
+        let d = UserDefaults.standard
+        glassesToday = Self.storedGlasses() + 1
+        d.set(glassesToday, forKey: Self.glassesKey)
+        d.set(Self.todayStamp, forKey: Self.glassesDayKey)
+    }
+
     private func tick() {
+        if glassesToday != Self.storedGlasses() { glassesToday = Self.storedGlasses() }   // new day
         guard !overlay.isShowing else { return }
         let now = Date()
         // One at a time; whichever is still due goes on the next tick.
@@ -65,7 +76,7 @@ final class NudgeScheduler: ObservableObject {
         let outcome = await overlay.runWater()
         let wait: TimeInterval
         switch outcome {
-        case .done: wait = waterInterval
+        case .done: wait = waterInterval; addGlass()
         case .later: wait = snooze
         case .dismissed: wait = dismissSnooze      // Esc
         }

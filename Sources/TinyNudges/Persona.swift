@@ -9,16 +9,30 @@ struct Persona: Identifiable {
     let palette: Palette
     let sprites: SpriteCounts
     let script: Script
+    /// Wording for the menu and Settings screens. Optional: a new character gets the neutral defaults.
+    var ui = UIText()
     /// Sprite file (without .png) used as the menu avatar; nil = the standing pose, else the happy one.
     var avatarSprite: String? = nil
 
     static let all: [Persona] = [.female, .male]
+    /// The single-character setting from before each reminder had its own; still read as a fallback.
     static let storageKey = "persona"
 
-    /// The character the user picked (falls back to the first one).
-    static var selected: Persona {
-        let id = UserDefaults.standard.string(forKey: storageKey)
+    enum Reminder: String {
+        case water, eye
+        var storageKey: String { "persona.\(rawValue)" }
+    }
+
+    /// The character the user picked for a reminder (falls back to the older shared pick, then the first character).
+    static func selected(for reminder: Reminder) -> Persona {
+        let d = UserDefaults.standard
+        let id = d.string(forKey: reminder.storageKey) ?? d.string(forKey: storageKey)
         return all.first { $0.id == id } ?? all[0]
+    }
+
+    /// Resolves a stored id (empty = not chosen yet) for a reminder.
+    static func resolve(_ id: String, for reminder: Reminder) -> Persona {
+        all.first { $0.id == id } ?? selected(for: reminder)
     }
 
     /// Bubble colours, as RGB triples so personas can be declared without SwiftUI.
@@ -35,6 +49,18 @@ struct Persona: Identifiable {
         let askFrame, stretchFrame: Int
         /// Frames of an optional standing pose held while talking after walking in (0 = none: the glass is held out instead).
         var idle = 0
+    }
+
+    /// The character's voice in the menu-bar popover and Settings. Every field has a neutral default,
+    /// so a new persona only overrides what it wants to say differently.
+    struct UIText {
+        var menuTagline = "Looking after you"
+        var settingsSubtitle = "Press Save to apply changes"
+        var save = "Save"
+        var saved = "Saved"
+        /// Shown under the water card; `%d` is today's glass count.
+        var glassesOne = "1 glass today"
+        var glassesMany = "%d glasses today"
     }
 
     /// All the words, per reminder.

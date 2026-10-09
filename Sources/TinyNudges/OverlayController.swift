@@ -14,14 +14,14 @@ final class OverlayController: ObservableObject {
     @Published var pose: Pose = .walkIn
     @Published var poseStart = Date()
     @Published var bubble: Bubble?
-    @Published var persona = Persona.selected
-    @Published var lines = Persona.selected.script.waterLines[0]
+    @Published var persona = Persona.selected(for: .water)
+    @Published var lines = Persona.selected(for: .water).script.waterLines[0]
     @Published var eyeFrame = 0            // index into Sprites.eye (strain frames, then laptop, then stretch)
-    @Published var eyeStep = Persona.selected.script.eyeSegments[0]
+    @Published var eyeStep = Persona.selected(for: .water).script.eyeSegments[0]
     @Published var eyeProgress = 0.0       // 0...1 through the break
     @Published var eyeIndex = 0            // which of the 12 pop-ups we're on (drives the progress bar)
     @Published var segProgress = 0.0       // 0...1 through the current segment (drives the breathing orb)
-    @Published var eyeAsk = Persona.selected.script.eyeAsks[0]
+    @Published var eyeAsk = Persona.selected(for: .water).script.eyeAsks[0]
 
     private(set) var isShowing = false
     private var panel: NSPanel?
@@ -34,7 +34,7 @@ final class OverlayController: ObservableObject {
 
     /// Water reminder. `.done` = "I'll drink", `.later` = "Maybe later".
     func runWater() async -> Outcome {
-        guard let session = await begin() else { return .later }
+        guard let session = await begin(for: .water) else { return .later }
         if dismissed { return abort(session) }
 
         setPose(persona.sprites.idle > 0 ? .idle : .giveWater)   // some characters strike a pose instead of offering the glass
@@ -58,7 +58,7 @@ final class OverlayController: ObservableObject {
     /// Eye-strain break: asks first, then a timed routine (see the persona's eyeSegments) of `duration` real seconds.
     /// `.done` = break taken, `.later` = "Not yet".
     func runEyeBreak(duration: Int) async -> Outcome {
-        guard let session = await begin() else { return .later }
+        guard let session = await begin(for: .eye) else { return .later }
         if dismissed { return abort(session) }
         eyeIndex = 0
         eyeStep = persona.script.eyeSegments[0]   // otherwise the previous run's finale lingers in the first bubble
@@ -164,11 +164,11 @@ final class OverlayController: ObservableObject {
     private struct Session { let panel: NSPanel; let y: CGFloat; let offscreenX: CGFloat }
 
     /// Opens the window and walks the character in. Nil if one is already showing.
-    private func begin() async -> Session? {
+    private func begin(for reminder: Persona.Reminder) async -> Session? {
         guard !isShowing, let screen = NSScreen.main else { return nil }
         isShowing = true
         dismissed = false
-        persona = Persona.selected   // picked up fresh each visit, so a change applies next time
+        persona = Persona.selected(for: reminder)   // picked up fresh each visit, so a change applies next time
         escapeKey.register { [weak self] in self?.dismiss() }
         bubble = nil
         lines = persona.script.waterLines.randomElement() ?? persona.script.waterLines[0]

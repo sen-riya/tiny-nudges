@@ -4,7 +4,7 @@ extension Persona {
     /// The original character: chocolate hair, cream suit, gold earrings. Sprites live in Resources/female/.
     static let female = Persona(
         id: "female",
-        name: "Female",
+        name: "Sunny",
         palette: Palette(ink: (0.25, 0.15, 0.12), cream: (1.0, 0.965, 0.92), aqua: (0.60, 0.86, 0.84),
                          blush: (1.0, 0.78, 0.78), gold: (1.0, 0.84, 0.45), apricot: (1.0, 0.84, 0.68)),
         sprites: SpriteCounts(walkIn: 4, walkOut: 4, give: 3, happy: 1, sad: 2, eye: 8, relax: 2, askFrame: 8, stretchFrame: 9),
@@ -41,6 +41,8 @@ extension Persona {
                 EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. You deserved that. Go be brilliant!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ]
         ),
+        ui: UIText(menuTagline: "Looking after you, superstar", settingsSubtitle: "Tweak away, then press Save",
+                   save: "Save it!", saved: "All saved!", glassesOne: "1 glass, hooray!", glassesMany: "%d glasses, hooray!"),
         avatarSprite: "eye_0"
     )
 }

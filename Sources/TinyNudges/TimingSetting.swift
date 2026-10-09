@@ -34,16 +34,14 @@ enum TimingSetting: String, CaseIterable {
 
     var secondsPerUnit: TimeInterval { self == .eyeDuration ? 1 : 60 }
 
+    /// Saved value in the setting's own unit (ignores the environment override).
+    var storedValue: Int { UserDefaults.standard.object(forKey: key) as? Int ?? defaultValue }
+
     /// Current value in seconds.
     var seconds: TimeInterval {
         if let override = ProcessInfo.processInfo.environment[envName].flatMap(TimeInterval.init) {
             return override
         }
-        let stored = UserDefaults.standard.object(forKey: key) as? Int ?? defaultValue
-        return TimeInterval(stored) * secondsPerUnit
-    }
-
-    static func resetAll() {
-        for setting in allCases { UserDefaults.standard.removeObject(forKey: setting.key) }
+        return TimeInterval(storedValue) * secondsPerUnit
     }
 }

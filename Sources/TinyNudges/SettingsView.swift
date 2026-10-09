@@ -3,48 +3,71 @@ import SwiftUI
 /// Timing settings, styled like the menu-bar popover. (The character is picked there, not here.)
 struct SettingsView: View {
     @EnvironmentObject private var scheduler: NudgeScheduler
-    @AppStorage(Persona.storageKey) private var personaID = Persona.all[0].id
+    @AppStorage(Persona.Reminder.water.storageKey) private var personaID = ""
+    /// Edits stay here until Save is pressed.
+    @StateObject private var model = DraftModel()
 
-    private var persona: Persona { Persona.all.first { $0.id == personaID } ?? Persona.all[0] }
+    private var persona: Persona { Persona.resolve(personaID, for: .water) }
     private var palette: Persona.Palette { persona.palette }
     private var ink: Color { Color(palette.ink) }
+
+    private var hasChanges: Bool { model.draft != DraftModel.stored() }
+
+    private func binding(_ setting: TimingSetting) -> Binding<Int> {
+        Binding(get: { model.draft[setting] ?? setting.defaultValue }, set: { model.draft[setting] = $0 })
+    }
+
+    private func save() {
+        let old = DraftModel.stored()
+        for (setting, value) in model.draft { UserDefaults.standard.set(value, forKey: setting.key) }
+        if model.draft[.waterInterval] != old[.waterInterval] { scheduler.rescheduleWater() }
+        if model.draft[.eyeInterval] != old[.eyeInterval] { scheduler.rescheduleEye() }
+        model.objectWillChange.send()   // re-evaluate hasChanges
+    }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 header
                 SettingsCard(palette: palette, title: "Water", symbol: "drop.fill", tint: Color(palette.aqua)) {
-                    TimingRow(palette, .waterInterval, "Reminder interval", "How often a water reminder appears.", range: 5...480, step: 5, unit: "min") {
-                        scheduler.rescheduleWater()
-                    }
-                    TimingRow(palette, .waterSnooze, "Snooze delay", "How long to wait before asking again when you say later.", range: 1...120, step: 1, unit: "min")
+                    TimingRow(palette, .waterInterval, binding(.waterInterval), "Reminder interval", "How often a water reminder appears.", range: 5...480, step: 5, unit: "min")
+                    TimingRow(palette, .waterSnooze, binding(.waterSnooze), "Snooze delay", "How long to wait before asking again when you say later.", range: 1...120, step: 1, unit: "min")
                 }
                 SettingsCard(palette: palette, title: "Eye break", symbol: "eye.fill", tint: Color(palette.apricot)) {
-                    TimingRow(palette, .eyeInterval, "Reminder interval", "How often an eye break is suggested.", range: 10...600, step: 5, unit: "min") {
-                        scheduler.rescheduleEye()
-                    }
-                    TimingRow(palette, .eyeSnooze, "Snooze delay", "How long to wait before asking again when you say not now.", range: 1...120, step: 1, unit: "min")
-                    TimingRow(palette, .eyeDuration, "Break length", "How long the guided eye-break routine runs.", range: 10...300, step: 5, unit: "sec")
+                    TimingRow(palette, .eyeInterval, binding(.eyeInterval), "Reminder interval", "How often an eye break is suggested.", range: 10...600, step: 5, unit: "min")
+                    TimingRow(palette, .eyeSnooze, binding(.eyeSnooze), "Snooze delay", "How long to wait before asking again when you say not now.", range: 1...120, step: 1, unit: "min")
+                    TimingRow(palette, .eyeDuration, binding(.eyeDuration), "Break length", "How long the guided eye-break routine runs.", range: 10...300, step: 5, unit: "sec")
                 }
                 SettingsCard(palette: palette, title: "Both", symbol: "bell.fill", tint: Color(palette.blush)) {
-                    TimingRow(palette, .dismissSnooze, "Esc delay", "How long to wait before coming back after you press Esc.", range: 1...120, step: 1, unit: "min")
-                    TimingRow(palette, .gap, "Minimum gap", "The least time between a water reminder and an eye break.", range: 0...60, step: 1, unit: "min")
+                    TimingRow(palette, .dismissSnooze, binding(.dismissSnooze), "Esc delay", "How long to wait before coming back after you press Esc.", range: 1...120, step: 1, unit: "min")
+                    TimingRow(palette, .gap, binding(.gap), "Minimum gap", "The least time between a water reminder and an eye break.", range: 0...60, step: 1, unit: "min")
                 }
-                Button {
-                    TimingSetting.resetAll()
-                    scheduler.settingsReset()
-                } label: {
-                    Label("Reset to defaults", systemImage: "arrow.counterclockwise")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                        .foregroundColor(ink)
-                        .padding(.horizontal, 16).padding(.vertical, 8)
-                        .background(Capsule().fill(ink.opacity(0.08)))
+                HStack(spacing: 10) {
+                    Button {
+                        for setting in TimingSetting.allCases { model.draft[setting] = setting.defaultValue }
+                    } label: {
+                        Label("Reset to defaults", systemImage: "arrow.counterclockwise")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundColor(ink)
+                            .padding(.horizontal, 16).padding(.vertical, 8)
+                            .background(Capsule().fill(ink.opacity(0.08)))
+                    }
+                    .buttonStyle(.plain)
+                    Button(action: save) {
+                        Label(hasChanges ? persona.ui.save : persona.ui.saved, systemImage: hasChanges ? "square.and.arrow.down.fill" : "checkmark.circle.fill")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundColor(ink)
+                            .padding(.horizontal, 18).padding(.vertical, 8)
+                            .background(Capsule().fill(hasChanges ? Color(palette.apricot) : Color(palette.aqua)))
+                            .overlay(Capsule().strokeBorder(ink, lineWidth: 2))
+                            .animation(.easeInOut(duration: 0.2), value: hasChanges)
+                    }
+                    .buttonStyle(.plain)
+                    .allowsHitTesting(hasChanges)
                 }
-                .buttonStyle(.plain)
             }
             .padding(20)
         }
-        .id(scheduler.resetCount)
         .frame(width: 440, height: 560)
         .background(Color(palette.cream))
     }
@@ -57,13 +80,22 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("Settings")
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
-                Text("Changes apply straight away")
+                Text(persona.ui.settingsSubtitle)
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .opacity(0.65)
             }
             .foregroundColor(ink)
             Spacer(minLength: 0)
         }
+    }
+}
+
+/// Unsaved edits; nothing reaches UserDefaults until Save.
+private final class DraftModel: ObservableObject {
+    @Published var draft = DraftModel.stored()
+
+    static func stored() -> [TimingSetting: Int] {
+        Dictionary(uniqueKeysWithValues: TimingSetting.allCases.map { ($0, $0.storedValue) })
     }
 }
 
@@ -111,19 +143,17 @@ private struct TimingRow: View {
     let range: ClosedRange<Int>
     let step: Int
     let unit: String
-    let onChange: (() -> Void)?
-    @AppStorage private var value: Int
+    @Binding private var value: Int
 
-    init(_ palette: Persona.Palette, _ setting: TimingSetting, _ label: String, _ detail: String, range: ClosedRange<Int>,
-         step: Int, unit: String, onChange: (() -> Void)? = nil) {
+    init(_ palette: Persona.Palette, _ setting: TimingSetting, _ value: Binding<Int>, _ label: String, _ detail: String,
+         range: ClosedRange<Int>, step: Int, unit: String) {
         self.palette = palette
         self.label = label
         self.detail = detail
         self.range = range
         self.step = step
         self.unit = unit
-        self.onChange = onChange
-        _value = AppStorage(wrappedValue: setting.defaultValue, setting.key)
+        _value = value
     }
 
     private var ink: Color { Color(palette.ink) }
@@ -149,6 +179,5 @@ private struct TimingRow: View {
             Stepper("", value: $value, in: range, step: step)
                 .labelsHidden()
         }
-        .onChange(of: value) { _ in onChange?() }
     }
 }
