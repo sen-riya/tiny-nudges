@@ -66,18 +66,23 @@ The eye break lasts 60 seconds by default, and there is at least a 10-minute gap
 
 ## The menu-bar popover
 
-Click the water-drop icon in the menu bar. The popover is themed with the water character's colours and has:
+Click the water-drop icon in the menu bar. The popover takes its colours from the water character and has:
 
-- **A header** with the Tiny Nudges logo and a one-line tagline in the water character's voice.
+- **A header** with the Tiny Nudges logo and a tagline in the water character's voice.
 - **A Water card and an Eye break card.** Each shows when the reminder is next due (for example "7:23 PM · in 3 h", counting down by itself) and a **Now** button to run it immediately. The popover closes when you press it, so the character isn't hidden behind it. The Water card also counts today's glasses (each "yes" adds one; it starts over at midnight).
-- **A "Nagged by" picker on each card.** Tap it to open a list of every character (with their picture and name; it scrolls once there are more than a few), so water and eye breaks can have different characters. The change shows up the next time that reminder appears.
+- **A "Nagged by" picker on each card.** Tap it to open a list of every character (picture and name; it scrolls once there are more than a few). Water and eye breaks can use different characters, and a change shows up the next time that reminder appears.
 - **Settings…** (⌘,) and **Quit**.
 
-Only one copy of the app can run: if you start a second one, it quits straight away, so you'll never see two menu-bar icons.
+Only one copy of the app runs at a time: a second copy quits straight away, so you never get two menu-bar icons.
 
 ## Settings
 
-Open **Settings…** from the popover. It uses the same look as the popover, with each setting shown as a title, a short description and its current value with a stepper. Edits stay in a draft until you press **Save**, which writes them and applies them; changing an interval restarts that countdown. The button reads **Save** while there are unsaved changes and **Saved** otherwise, and closing the window without saving discards your edits. **Reset to defaults** fills in the defaults, but they too only take effect once you press Save.
+Open **Settings…** from the popover. It uses the same look as the popover, with each setting shown as a title, a short description and its current value with a stepper.
+
+- **Nothing changes until you press Save.** Edits stay in a draft; **Save** writes and applies them, and changing an interval restarts that countdown.
+- The button reads **Save** while there are unsaved changes and **Saved** once everything is applied.
+- Closing the window without saving discards your edits.
+- **Reset to defaults** fills in the defaults, but they too only take effect once you press Save.
 
 | Group | Setting | What it does | Default |
 |-------|---------|--------------|---------|
@@ -91,9 +96,7 @@ Open **Settings…** from the popover. It uses the same look as the popover, wit
 
 ## Characters
 
-Every character has the same set of animations: walking in and out, offering the water, a happy reaction, a sad or side-eye reaction, and the eye-break poses. What differs is the artwork, the colours and every word they say.
-
-The table compares the two characters that ship with the app, as examples of how far characters can differ.
+Every character has the same set of animations: walking in and out, offering the water, a happy reaction, a sad or side-eye reaction, and the eye-break poses. What differs is the name, the artwork, the colours and every word they say. The table compares the two characters that ship with the app, as an example of how far characters can differ.
 
 | | `female` | `male` |
 |---|--------|------|
@@ -101,7 +104,7 @@ The table compares the two characters that ship with the app, as examples of how
 | Water | Holds the glass out while she talks | Strikes a standing, hands-in-pockets pose while he talks |
 | Said no | A sad, then eyes-closed reaction | A swaying side-eye |
 | Eye break | Lies down with a laptop, then glasses and stretches | Lies down with a laptop, then glasses, stretches and a yawn |
-| Voice | Warm and playful | Casual, with "Oi, sunn!", "Lessgo!", "Dammmmnn" and friends |
+| Voice | Warm and playful | Casual, with "Oi, sunn!" and "Lessgo!" |
 
 ### How a character is built
 
@@ -110,7 +113,7 @@ Each character is a `Persona` (`Sources/TinyNudges/Persona.swift`). It bundles:
 - the character's **id** (used for the sprite folder and saved choices) and display **name**,
 - a **colour palette** for the speech bubbles and the popover,
 - **sprite counts**: how many frames each animation has, which frame is held while asking, which one bounces when stretching, and an optional standing pose,
-- a **script**: the button labels, the water greetings and replies, the eye-break pitches, the twelve routine steps and an optional goodbye,
+- a **script**: the button labels, the water greetings and replies, the eye-break pitches, the eye-break routine (eleven timed steps plus a finale) and an optional goodbye,
 - optional **menu wording** (`ui`): the popover tagline, the Settings subtitle, the Save / Saved labels and the "glasses" counter text. Every field has a neutral default, so a new character only sets what it wants to say differently,
 - an optional **menu avatar** (a sprite file shown in the character list).
 
