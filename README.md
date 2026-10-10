@@ -66,18 +66,25 @@ The eye break lasts 60 seconds by default, and there is at least a 10-minute gap
 
 ## The menu-bar popover
 
-Click the water-drop icon in the menu bar. The popover takes its colours from the water character and has:
+Click the water-drop icon in the menu bar. The popover is deliberately simple:
 
-- **A header** with the Tiny Nudges logo and a tagline in the water character's voice.
-- **A Water card and an Eye break card.** Each shows when the reminder is next due (for example "7:23 PM · in 3 h", counting down by itself) and a **Now** button to run it immediately. The popover closes when you press it, so the character isn't hidden behind it. The Water card also counts today's glasses (each "yes" adds one; it starts over at midnight).
-- **A "Nagged by" picker on each card.** Tap it to open a list of every character (picture and name; it scrolls once there are more than a few). Water and eye breaks can use different characters, and a change shows up the next time that reminder appears.
-- **Settings…** (⌘,) and **Quit**.
+- **The logo and name.**
+- **A Water line and an Eye break line.** Each shows when the reminder is next due (for example "7:23 PM · in 3 h", counting down by itself) and a **Now** button to run it immediately. The popover closes when you press it, so the character isn't hidden behind it.
+- **Open app** (⌘,) and **Quit**.
 
 Only one copy of the app runs at a time: a second copy quits straight away, so you never get two menu-bar icons.
 
+## The app window
+
+**Open app** shows the full window, with two tabs:
+
+- **Reminders**: a Water card and an Eye break card, each with the next due time, a **Now** button and a **"Nagged by"** picker. Tap the picker to open a list of every character (picture and name). Water and eye breaks can use different characters, and a change shows up the next time that reminder appears.
+- **Stats**: tap a card's name to open its stats: the total number of glasses (or eye breaks) taken with Tiny Nudges, today's count, how many times you answered yes, maybe later and Esc, the yes percentage, and a 7-day daily tracker. The eye break page also shows the total time spent resting your eyes. Every answer is saved on your Mac (up to the last 5,000), so the stats carry over between launches.
+- **Settings**: see below.
+
 ## Settings
 
-Open **Settings…** from the popover. It uses the same look as the popover, with each setting shown as a title, a short description and its current value with a stepper.
+Open the **Settings** tab in the app window. Each setting is shown as a title, a short description and its current value with a stepper.
 
 - **Nothing changes until you press Save.** Edits stay in a draft; **Save** writes and applies them, and changing an interval restarts that countdown.
 - The button reads **Save** while there are unsaved changes and **Saved** once everything is applied.
@@ -210,9 +217,11 @@ To start with a particular character, pass it as a launch argument per reminder:
 ## Project layout
 
 - `Sources/TinyNudges/`: app code (SwiftUI + AppKit)
-  - `TinyNudgesApp.swift`: app entry point (menu-bar popover and Settings window)
-  - `MenuBarView.swift`: the menu-bar popover
-  - `SettingsView.swift` / `TimingSetting.swift`: the Settings window and the adjustable timings
+  - `TinyNudgesApp.swift`: app entry point (menu-bar popover and app window)
+  - `MenuBarView.swift`: the simple menu-bar popover
+  - `ReminderDetailView.swift` / `NudgeLog.swift`: the per-reminder stats page and the saved history of answers
+  - `AppView.swift` / `Components.swift`: the app window (Reminders and Settings tabs) and its shared cards and buttons
+  - `SettingsView.swift` / `TimingSetting.swift`: the Settings tab and the adjustable timings
   - `NudgeScheduler.swift`: decides when each reminder shows
   - `OverlayController.swift` / `OverlayView.swift` / `CharacterView.swift`: the on-screen character, the speech bubbles and the sprite animations
   - `EscapeHotKey.swift`: the global Esc shortcut

@@ -20,8 +20,8 @@ struct TinyNudgesApp: App {
             MenuBarView().environmentObject(scheduler)
         }
         .menuBarExtraStyle(.window)
-        Window("Tiny Nudges Settings", id: "settings") {
-            SettingsView().environmentObject(scheduler)
+        Window("Tiny Nudges", id: "main") {
+            AppView().environmentObject(scheduler)
         }
         .windowResizability(.contentSize)
     }

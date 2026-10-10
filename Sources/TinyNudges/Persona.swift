@@ -18,7 +18,7 @@ struct Persona: Identifiable {
     /// The single-character setting from before each reminder had its own; still read as a fallback.
     static let storageKey = "persona"
 
-    enum Reminder: String {
+    enum Reminder: String, Codable {
         case water, eye
         var storageKey: String { "persona.\(rawValue)" }
     }

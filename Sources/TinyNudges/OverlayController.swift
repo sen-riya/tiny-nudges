@@ -5,7 +5,7 @@ enum Pose { case walkIn, giveWater, idle, happy, sad, eyeBreak, walkOut }
 enum Bubble { case greeting, question, happy, sad, eyeAsk, eyeLater, eyeStep, eyeDone, bye }
 
 /// How a reminder ended.
-enum Outcome { case done, later, dismissed }
+enum Outcome: String, Codable { case done, later, dismissed }
 
 /// Owns the transparent window the character lives in and runs the
 /// walk in -> ask -> react -> walk out sequence.

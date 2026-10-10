@@ -16,8 +16,7 @@ final class NudgeScheduler: ObservableObject {
 
     @Published private(set) var nextWater: Date
     @Published private(set) var nextEye: Date
-    /// "Yes" answers to the water reminder today; starts over at midnight.
-    @Published private(set) var glassesToday = NudgeScheduler.storedGlasses()
+    let log = NudgeLog()
     private let overlay = OverlayController()
     private var timer: Timer?
 
@@ -44,24 +43,7 @@ final class NudgeScheduler: ObservableObject {
         Task { await showEyeBreak() }
     }
 
-    private static let glassesKey = "glassesToday"
-    private static let glassesDayKey = "glassesDay"
-    private static var todayStamp: String { Calendar.current.startOfDay(for: Date()).formatted(.iso8601.year().month().day()) }
-
-    private static func storedGlasses() -> Int {
-        let d = UserDefaults.standard
-        return d.string(forKey: glassesDayKey) == todayStamp ? d.integer(forKey: glassesKey) : 0
-    }
-
-    private func addGlass() {
-        let d = UserDefaults.standard
-        glassesToday = Self.storedGlasses() + 1
-        d.set(glassesToday, forKey: Self.glassesKey)
-        d.set(Self.todayStamp, forKey: Self.glassesDayKey)
-    }
-
     private func tick() {
-        if glassesToday != Self.storedGlasses() { glassesToday = Self.storedGlasses() }   // new day
         guard !overlay.isShowing else { return }
         let now = Date()
         // One at a time; whichever is still due goes on the next tick.
@@ -76,10 +58,11 @@ final class NudgeScheduler: ObservableObject {
         let outcome = await overlay.runWater()
         let wait: TimeInterval
         switch outcome {
-        case .done: wait = waterInterval; addGlass()
+        case .done: wait = waterInterval
         case .later: wait = snooze
         case .dismissed: wait = dismissSnooze      // Esc
         }
+        log.record(.water, outcome)
         let end = Date()
         nextWater = end.addingTimeInterval(wait)
         nextEye = max(nextEye, end.addingTimeInterval(minGap))
@@ -93,6 +76,7 @@ final class NudgeScheduler: ObservableObject {
         case .later: wait = eyeSnooze
         case .dismissed: wait = dismissSnooze      // Esc
         }
+        log.record(.eye, outcome, seconds: outcome == .done ? eyeDuration : 0)
         let end = Date()
         nextEye = end.addingTimeInterval(wait)
         nextWater = max(nextWater, end.addingTimeInterval(minGap))
