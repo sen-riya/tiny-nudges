@@ -121,7 +121,6 @@ Each character is a `Persona` (`Sources/TinyNudges/Persona.swift`). It bundles:
 - a **colour palette** for the speech bubbles and the popover,
 - **sprite counts**: how many frames each animation has, which frame is held while asking, which one bounces when stretching, and an optional standing pose,
 - a **script**: the button labels, the water greetings and replies, the eye-break pitches, the eye-break routine (eleven timed steps plus a finale) and an optional goodbye,
-- optional **menu wording** (`ui`): the popover tagline, the Settings subtitle, the Save / Saved labels and the "glasses" counter text. Every field has a neutral default, so a new character only sets what it wants to say differently,
 - an optional **menu avatar** (a sprite file shown in the character list).
 
 `Personas/Female.swift` and `Personas/Male.swift` are the two included examples. The character chosen for each reminder is stored in your preferences and picked up fresh each time that reminder appears.
@@ -129,7 +128,7 @@ Each character is a `Persona` (`Sources/TinyNudges/Persona.swift`). It bundles:
 ### Adding another character
 
 1. Make a folder `Sources/TinyNudges/Resources/<id>/` with PNG frames named `<animation>_<number>.png`: `walkin`, `walkout`, `give`, `happy`, `sad` and `eye` (plus `relax` for the laptop and stretch poses, and `idle` if the character should stand while talking). Frames in one animation should share the same canvas size so the character doesn't jump.
-2. Copy `Personas/Male.swift`, rename it, give it a name, and fill in the palette, sprite counts, messages and (optionally) `ui` wording.
+2. Copy `Personas/Male.swift`, rename it, give it a name, and fill in the palette, sprite counts, messages and (optionally) a menu avatar.
 3. Add it to `Persona.all` in `Persona.swift`.
 4. Run `./package.sh`. The "Nagged by" lists show every character in `Persona.all`.
 
@@ -190,7 +189,7 @@ rm -rf "$HOME/Applications/Tiny Nudges.app" "$HOME/Library/LaunchAgents/com.tiny
 
 ## Customising
 
-- **Change what a character says:** edit `Personas/Female.swift` or `Personas/Male.swift` (including the menu and Settings wording in `ui`), then run `./package.sh`. The speech bubbles fit their text: they are as narrow as short text allows and grow (up to about 290 pt wide) to wrap long text. The two buttons sit side by side when their labels are short and stack when a label is long.
+- **Change what a character says:** edit `Personas/Female.swift` or `Personas/Male.swift`, then run `./package.sh`. The speech bubbles fit their text: they are as narrow as short text allows and grow (up to about 290 pt wide) to wrap long text. The two buttons sit side by side when their labels are short and stack when a label is long.
 - **Change colours:** edit the `palette` of the character.
 - **Change timings:** use Settings, or the [environment variables](#testing-with-short-timings) while testing.
 

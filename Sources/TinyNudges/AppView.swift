@@ -62,7 +62,7 @@ struct AppView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("Tiny Nudges")
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
-                Text(persona.ui.menuTagline)
+                Text("Looking after you")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .opacity(0.65)
             }

@@ -4,7 +4,6 @@ import SwiftUI
 /// Characters, settings and the glasses count live in the app window.
 struct MenuBarView: View {
     @EnvironmentObject private var scheduler: NudgeScheduler
-    @Environment(\.openWindow) private var openWindow
     @AppStorage(Persona.Reminder.water.storageKey) private var waterID = ""
     @AppStorage(Persona.Reminder.eye.storageKey) private var eyeID = ""
 
@@ -49,8 +48,7 @@ struct MenuBarView: View {
         HStack(spacing: 10) {
             FooterButton(palette: palette, title: "Open app", symbol: "macwindow") {
                 dismissMenu()
-                openWindow(id: "main")
-                NSApp.activate(ignoringOtherApps: true)
+                AppDelegate.shared.showMainWindow()
             }
             .keyboardShortcut(",")
             FooterButton(palette: palette, title: "Quit", symbol: "power") {

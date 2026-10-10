@@ -52,7 +52,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 Button(action: save) {
-                    Label(hasChanges ? persona.ui.save : persona.ui.saved, systemImage: hasChanges ? "square.and.arrow.down.fill" : "checkmark.circle.fill")
+                    Label(hasChanges ? "Save" : "Saved", systemImage: hasChanges ? "square.and.arrow.down.fill" : "checkmark.circle.fill")
                         .font(.system(size: 12, weight: .bold, design: .rounded))
                         .foregroundColor(ink)
                         .padding(.horizontal, 18).padding(.vertical, 8)

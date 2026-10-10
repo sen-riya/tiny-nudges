@@ -9,8 +9,6 @@ struct Persona: Identifiable {
     let palette: Palette
     let sprites: SpriteCounts
     let script: Script
-    /// Wording for the menu and Settings screens. Optional: a new character gets the neutral defaults.
-    var ui = UIText()
     /// Sprite file (without .png) used as the menu avatar; nil = the standing pose, else the happy one.
     var avatarSprite: String? = nil
 
@@ -49,18 +47,6 @@ struct Persona: Identifiable {
         let askFrame, stretchFrame: Int
         /// Frames of an optional standing pose held while talking after walking in (0 = none: the glass is held out instead).
         var idle = 0
-    }
-
-    /// The character's voice in the menu-bar popover and Settings. Every field has a neutral default,
-    /// so a new persona only overrides what it wants to say differently.
-    struct UIText {
-        var menuTagline = "Looking after you"
-        var settingsSubtitle = "Press Save to apply changes"
-        var save = "Save"
-        var saved = "Saved"
-        /// Shown under the water card; `%d` is today's glass count.
-        var glassesOne = "1 glass today"
-        var glassesMany = "%d glasses today"
     }
 
     /// All the words, per reminder.

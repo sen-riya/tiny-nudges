@@ -41,8 +41,6 @@ extension Persona {
                 EyeSegment(title: "Fresh eyes, who dis?", subtitle: "Glasses back on. You deserved that. Go be brilliant!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ]
         ),
-        ui: UIText(menuTagline: "Looking after you, superstar", settingsSubtitle: "Tweak away, then press Save",
-                   save: "Save it!", saved: "All saved!", glassesOne: "1 glass, hooray!", glassesMany: "%d glasses, hooray!"),
         avatarSprite: "eye_0"
     )
 }

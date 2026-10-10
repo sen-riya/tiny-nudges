@@ -43,7 +43,5 @@ extension Persona {
                 EyeSegment(title: "Glass back on!", subtitle: "Dammmmnn Bro, you look brand new. Go crush it!", seconds: 5, frames: [6, 7], frameSeconds: 2.5, isFinale: true),
             ],
         ),
-        ui: UIText(menuTagline: "Got your back, bro", settingsSubtitle: "Set it up, then hit Save, bhai",
-                   save: "Save, bro", saved: "Done, bro", glassesOne: "1 glass, nice", glassesMany: "%d glasses, nice")
     )
 }

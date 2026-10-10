@@ -46,7 +46,7 @@ cat > "$PLIST" <<PL
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
   <key>Label</key><string>$LABEL</string>
-  <key>ProgramArguments</key><array><string>$APP/Contents/MacOS/TinyNudges</string></array>
+  <key>ProgramArguments</key><array><string>$APP/Contents/MacOS/TinyNudges</string><string>--background</string></array>
   <key>RunAtLoad</key><true/>
 </dict></plist>
 PL
