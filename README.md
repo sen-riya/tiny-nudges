@@ -72,14 +72,14 @@ Click the water-drop icon in the menu bar. The popover is deliberately simple:
 - **A Water line and an Eye break line.** Each shows when the reminder is next due (for example "7:23 PM · in 3 h", counting down by itself) and a **Now** button to run it immediately. The popover closes when you press it, so the character isn't hidden behind it.
 - **Open app** (⌘,) and **Quit**.
 
-Only one copy of the app runs at a time: a second copy quits straight away, so you never get two menu-bar icons.
+Only one copy of the app runs at a time. Starting a second copy (for example clicking the app again, or running a dev build) quits it straight away and brings the running app's window forward, so you never get two menu-bar icons.
 
 ## The app window
 
-**Open app** shows the full window, with two tabs:
+Click **Tiny Nudges** in Applications (or Launchpad or Spotlight) to open the full window: it opens on a fresh launch, and also when the app is already running in the menu bar. **Open app** in the popover opens it too. At login the app starts quietly with just the menu-bar icon. The window has two tabs:
 
 - **Reminders**: a Water card and an Eye break card, each with the next due time, a **Now** button and a **"Nagged by"** picker. Tap the picker to open a list of every character (picture and name). Water and eye breaks can use different characters, and a change shows up the next time that reminder appears.
-- **Stats**: tap a card's name to open its stats: the total number of glasses (or eye breaks) taken with Tiny Nudges, today's count, how many times you answered yes, maybe later and Esc, the yes percentage, and a 7-day daily tracker. The eye break page also shows the total time spent resting your eyes. Every answer is saved on your Mac (up to the last 5,000), so the stats carry over between launches.
+  - **Stats**: click a card's name or its **View stats ›** link to open its stats: the total number of glasses (or eye breaks) taken with Tiny Nudges, today's count, how many times you answered yes, maybe later and Esc, the yes percentage, and a 7-day daily tracker. The eye break page also shows the total time spent resting your eyes. Every answer is saved on your Mac (up to the last 5,000), so the stats carry over between launches.
 - **Settings**: see below.
 
 ## Settings
@@ -178,7 +178,7 @@ It then starts automatically every time you log in. To just try it without insta
 
 ### What the installer does
 
-`./package.sh` builds a release binary, creates `~/Applications/Tiny Nudges.app` (with the app icon), ad-hoc signs it, and registers a LaunchAgent so it starts at login. Run it again any time to reinstall after you change the code. Edit `LABEL` at the top of `package.sh` to use your own bundle identifier.
+`./package.sh` builds a release binary, creates `~/Applications/Tiny Nudges.app` (with the app icon), ad-hoc signs it, and registers a LaunchAgent so it starts at login (menu-bar icon only, no window). Run it again any time to reinstall after you change the code. Edit `LABEL` at the top of `package.sh` to use your own bundle identifier.
 
 To uninstall:
 
