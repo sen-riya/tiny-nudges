@@ -38,16 +38,16 @@ You choose who nags you from a list of characters, and you can pick a different 
 2. **Not now** and they leave, then come back after the snooze delay.
 3. **Yes** starts a guided routine. A step bubble pops up for each moment, and a segmented bar fills as you go:
 
-   | Steps |     What happens          |
-   |-------|---------------------------|
-   |   1   | Screens off, eyes up      |
-   |   2   | Glasses off               |
-   |   3   | Breathe in, breathe out   |
-   |   4   | Stretch                   |
-   |   5   | Look around               |
-   |   6   | Breathing exercise again  |
-   |   7   | Big yawn and stretch      |
-   |   8   | Look far away             |
+   | Steps |           What happens             |
+   |-------|------------------------------------|
+   |   1   |       Screens off, eyes up         |
+   |   2   |       Glasses off                  |
+   |   3   |       Breathe in, breathe out      |
+   |   4   |       Stretch                      |
+   |   5   |       Look around                  |
+   |   6   |       Breathing exercise again     |
+   |   7   |       Big yawn and stretch         |
+   |   8   |       Look far away                |
 
    These 8 steps share the **break length** (60 seconds by default) equally, on a real clock, so the routine always lasts as long as you set. Only after the whole routine is done does the **finale** bubble ("fresh eyes") appear for a few seconds, and then the character walks out.
 
